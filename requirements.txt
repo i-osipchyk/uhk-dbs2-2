@@ -1,4 +1,5 @@
-Flask==2.0.3
+flask
+flask_restful
 mysql-connector-python
 jsonpickle
 flask_mysqldb
