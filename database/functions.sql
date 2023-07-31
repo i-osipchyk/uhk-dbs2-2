@@ -418,7 +418,7 @@ begin
         if phone_number_in_use is null then
             # if not
             # check the validity of reference code
-            select reference_code into reference_code_exists from admins where reference_code = reference_code_;
+            select reference_code into reference_code_exists from admins where reference_code = reference_code_ limit 1;
 
             if reference_code_exists is not null then
                 # if valid
