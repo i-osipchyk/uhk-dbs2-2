@@ -4,3 +4,4 @@ mysql-connector-python
 jsonpickle
 flask_mysqldb
 werkzeug
+requests
