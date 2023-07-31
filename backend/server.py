@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 import mysql.connector
 from functions import format_results
 
@@ -31,7 +31,38 @@ class Admins(Resource):
         return results
 
 
+class RegisterAdmin(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('first_name', type=str, required=True)
+        self.parser.add_argument('last_name', type=str, required=True)
+        self.parser.add_argument('email', type=str, required=True)
+        self.parser.add_argument('phone_number', type=str, required=True)
+        self.parser.add_argument('password', type=str, required=True)
+        self.parser.add_argument('reference_code', type=str, required=True)
+
+    def post(self):
+        args = self.parser.parse_args()
+        first_name = args['first_name']
+        last_name = args['last_name']
+        email = args['email']
+        phone_number = args['phone_number']
+        password = args['password']
+        reference_code = args['reference_code']
+
+        cursor = connection.cursor()
+        cursor.execute(f'select admin_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", '
+                       f'"{password}", "{reference_code}");')
+        result = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        return result
+
+
 api.add_resource(Admins, '/get_admins')
+api.add_resource(RegisterAdmin, '/register_admin', methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
