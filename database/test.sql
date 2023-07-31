@@ -67,3 +67,5 @@ select delete_product('Air Force 1', 'white', 'white', 'white', 'female');
 
 select * from orders_;
 select * from order_items;
+
+select * from admins;
