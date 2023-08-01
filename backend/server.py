@@ -134,9 +134,9 @@ class AddProductToOrder(Resource):
 class UpdateQuantity(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('customer_id')
-        self.parser.add_argument('product_id')
-        self.parser.add_argument('quantity')
+        self.parser.add_argument('customer_id', type=str, required=True)
+        self.parser.add_argument('product_id', type=str, required=True)
+        self.parser.add_argument('quantity', type=str, required=True)
 
     def update(self):
         args = self.parser.parse_args()
@@ -154,10 +154,33 @@ class UpdateQuantity(Resource):
         return result
 
 
+class RemoveItemFromOrder():
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('product_id', type=str, required=True)
+        self.parser.add_argument('customer_id', type=str, required=True)
+
+    def delete(self):
+        args = self.parser.parse_args()
+        product_id = args['product_id']
+        customer_id = args['customer_id']
+
+        cursor = connection.cursor()
+        cursor.execute(f'select remove_from_order("{product_id}", "{customer_id}");')
+        result = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        return result
+
+
 api.add_resource(RegisterCustomer, '/customer_registration', methods=['POST'])
 api.add_resource(LoginCustomer, '/customer_login', methods=['POST'])
 api.add_resource(UpdateAddress, '/update_address', methods=['POST'])
-api.add_resource(AddProductToOrder, 'add_to_order', methods='POST')
+api.add_resource(AddProductToOrder, '/add_to_order', methods='POST')
+api.add_resource(UpdateQuantity, '/update_quantity', methods=['POST'])
+api.add_resource(RemoveItemFromOrder, '/remove_from_order', methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
