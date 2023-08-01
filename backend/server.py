@@ -54,7 +54,58 @@ class RegisterCustomer(Resource):
         return result
 
 
+class LoginCustomer(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('email', type=str, required=True)
+
+    def get(self):
+        args = self.parser.parse_args()
+        email = args['email']
+
+        cursor = connection.cursor()
+        cursor.execute(f'select customer_login("{email}");')
+        result = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        return result
+
+
+class UpdateAddress(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('customer_id', type=str, required=True)
+        self.parser.add_argument('country', type=str, required=True)
+        self.parser.add_argument('city', type=str, required=True)
+        self.parser.add_argument('street', type=str, required=True)
+        self.parser.add_argument('house_number', type=str, required=True)
+        self.parser.add_argument('postal_code', type=str, required=True)
+
+    def post(self):
+        args = self.parser.parse_args()
+        customer_id = args['customer_id']
+        country = args['country']
+        city = args['city']
+        street = args['street']
+        house_number = args['house_number']
+        postal_code = args['postal_code']
+
+        cursor = connection.cursor()
+        cursor.execute(
+            f'select update_address("{customer_id}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
+        result = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        return result
+
+
 api.add_resource(RegisterCustomer, '/customer_registration', methods=['POST'])
+api.add_resource(LoginCustomer, '/customer_login', methods=['POST'])
+api.add_resource(UpdateAddress, '/update_address', methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
