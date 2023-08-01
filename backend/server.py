@@ -131,6 +131,29 @@ class AddProductToOrder(Resource):
         return result
 
 
+class UpdateQuantity(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('customer_id')
+        self.parser.add_argument('product_id')
+        self.parser.add_argument('quantity')
+
+    def update(self):
+        args = self.parser.parse_args()
+        customer_id = args['customer_id']
+        product_id = args['product_id']
+        quantity = args['quantity']
+
+        cursor = connection.cursor()
+        cursor.execute(f'select update_quantity("{customer_id}", "{product_id}", "{quantity}");')
+        result = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        return result
+
+
 api.add_resource(RegisterCustomer, '/customer_registration', methods=['POST'])
 api.add_resource(LoginCustomer, '/customer_login', methods=['POST'])
 api.add_resource(UpdateAddress, '/update_address', methods=['POST'])
