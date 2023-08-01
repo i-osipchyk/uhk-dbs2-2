@@ -16,22 +16,7 @@ connection = mysql.connector.connect(
 )
 
 
-class Admins(Resource):
-    def get(self):
-        cursor = connection.cursor()
-
-        cursor.execute("select * from admins")
-        rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
-        results = format_results(column_names, rows)
-
-        connection.commit()
-        cursor.close()
-
-        return results
-
-
-class RegisterAdmin(Resource):
+class RegisterCustomer(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('first_name', type=str, required=True)
@@ -39,7 +24,11 @@ class RegisterAdmin(Resource):
         self.parser.add_argument('email', type=str, required=True)
         self.parser.add_argument('phone_number', type=str, required=True)
         self.parser.add_argument('password', type=str, required=True)
-        self.parser.add_argument('reference_code', type=str, required=True)
+        self.parser.add_argument('country', type=str, required=True)
+        self.parser.add_argument('city', type=str, required=True)
+        self.parser.add_argument('street', type=str, required=True)
+        self.parser.add_argument('house_number', type=str, required=True)
+        self.parser.add_argument('postal_code', type=str, required=True)
 
     def post(self):
         args = self.parser.parse_args()
@@ -48,11 +37,15 @@ class RegisterAdmin(Resource):
         email = args['email']
         phone_number = args['phone_number']
         password = args['password']
-        reference_code = args['reference_code']
+        country = args['country']
+        city = args['city']
+        street = args['street']
+        house_number = args['house_number']
+        postal_code = args['postal_code']
 
         cursor = connection.cursor()
-        cursor.execute(f'select admin_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", '
-                       f'"{password}", "{reference_code}");')
+        cursor.execute(f'select customer_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", '
+                       f'"{password}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
         result = cursor.fetchall()
 
         connection.commit()
@@ -61,8 +54,7 @@ class RegisterAdmin(Resource):
         return result
 
 
-api.add_resource(Admins, '/get_admins')
-api.add_resource(RegisterAdmin, '/register_admin', methods=['POST'])
+api.add_resource(RegisterCustomer, '/customer_registration', methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
