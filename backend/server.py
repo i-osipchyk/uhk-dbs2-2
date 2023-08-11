@@ -233,7 +233,7 @@ class AdminLogin(Resource):
 
         cursor = connection.cursor()
         cursor.execute(f'select admin_login("{email}");')
-        existing_password_hash = str(cursor.fetchall()[0])
+        existing_password_hash = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
