@@ -77,14 +77,14 @@ create function customer_login(
 ) returns varchar(100) deterministic
 begin
     declare existing_email varchar(50);
-    declare existing_password varchar(1000);
+    declare existing_password_hash varchar(1000);
 
     select email into existing_email from customers where email = login_email;
 
     if existing_email is not null then
         # if email is found
-        select password_ into existing_password from customers where email = login_email;
-        return existing_password;
+        select password_ into existing_password_hash from customers where email = login_email;
+        return existing_password_hash;
     else
         return 'Account with following email was not found';
     end if;
@@ -450,7 +450,7 @@ create function admin_login(
 ) returns varchar(100) deterministic
 begin
     declare existing_email varchar(50);
-    declare existing_password varchar(1000);
+    declare existing_password_hash varchar(1000);
 
     # check if email is in database
     select email into existing_email from admins where email = login_email;
@@ -460,8 +460,8 @@ begin
         return 'Account with following email was not found';
     else
         # if it is
-        select password_ into existing_password from admins where email = login_email;
-            return existing_password;
+        select password_ into existing_password_hash from admins where email = login_email;
+            return existing_password_hash;
     end if;
 end;
 
