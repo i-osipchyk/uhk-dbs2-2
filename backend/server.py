@@ -45,9 +45,11 @@ class CustomerRegistration(Resource):
         house_number = args['house_number']
         postal_code = args['postal_code']
 
+        password_hash = generate_password_hash(password)
+
         cursor = connection.cursor()
         cursor.execute(f'select customer_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", '
-                       f'"{password}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
+                       f'"{password_hash}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
         result = cursor.fetchall()
 
         connection.commit()
@@ -204,9 +206,11 @@ class AdminRegistration(Resource):
         password = args['password']
         reference_code = args['reference_code']
 
+        password_hash = generate_password_hash(password)
+
         cursor = connection.cursor()
         cursor.execute(
-            f'select admin_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", "{password}", "{reference_code}");')
+            f'select admin_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", "{password_hash}", "{reference_code}");')
         result = cursor.fetchall()
 
         connection.commit()
