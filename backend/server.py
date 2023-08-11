@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, Api, reqparse
 import mysql.connector
 from functions import format_results, build_filter_query
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 api = Api(app)
@@ -60,19 +61,21 @@ class CustomerLogin(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('email', type=str, required=True)
+        self.parser.add_argument('password', type=str, required=True)
 
     def post(self):
         args = self.parser.parse_args()
         email = args['email']
+        password = args['password']
 
         cursor = connection.cursor()
         cursor.execute(f'select customer_login("{email}");')
-        result = cursor.fetchall()
+        existing_password_hash = str(cursor.fetchall()[0])
 
         connection.commit()
         cursor.close()
 
-        return result
+        return check_password_hash(existing_password_hash, password)
 
 
 # tested
@@ -217,19 +220,21 @@ class AdminLogin(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('email', type=str, required=True)
+        self.parser.add_argument('password', type=str, required=True)
 
     def post(self):
         args = self.parser.parse_args()
         email = args['email']
+        password = args['password']
 
         cursor = connection.cursor()
         cursor.execute(f'select admin_login("{email}");')
-        result = cursor.fetchall()
+        existing_password_hash = str(cursor.fetchall()[0])
 
         connection.commit()
         cursor.close()
 
-        return result
+        return check_password_hash(existing_password_hash, password)
 
 
 # tested
