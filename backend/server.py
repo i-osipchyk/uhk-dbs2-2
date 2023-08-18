@@ -1,11 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify, Response
 from flask_restful import Resource, Api, reqparse
 import mysql.connector
 from functions import format_results, build_filter_query
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 connection = mysql.connector.connect(
     user='root',
@@ -50,12 +52,16 @@ class CustomerRegistration(Resource):
         cursor = connection.cursor()
         cursor.execute(f'select customer_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", '
                        f'"{password_hash}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
-
-        return result
+        if result == 1:
+            return Response("{'message': 'Customer registered'}", status=200, mimetype='application/json')
+        elif result == 0:
+            return Response("{'message': 'Phone number is already in use'}", status=409, mimetype='application/json')
+        else:
+            return Response("{'message': 'Email is already in use'}", status=409, mimetype='application/json')
 
 
 # tested
@@ -77,7 +83,10 @@ class CustomerLogin(Resource):
         connection.commit()
         cursor.close()
 
-        return check_password_hash(existing_password_hash, password)
+        if check_password_hash(existing_password_hash, password):
+            return Response("{'message': 'Credentials are correct'}", status=200, mimetype='application/json')
+        else:
+            return Response('{"message": "Credentials are incorrect"}', status=401, mimetype="application/json")
 
 
 # tested
@@ -117,7 +126,6 @@ class AddProductToOrder(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('customer_id', type=int, required=True)
         self.parser.add_argument('product_id', type=int, required=True)
-        self.parser.add_argument('address_id', type=int, required=True)
         self.parser.add_argument('quantity', type=int, required=True)
         self.parser.add_argument('size', type=float, required=True)
 
@@ -125,13 +133,12 @@ class AddProductToOrder(Resource):
         args = self.parser.parse_args()
         customer_id = args['customer_id']
         product_id = args['product_id']
-        address_id = args['address_id']
         quantity = args['quantity']
         size = args['size']
 
         cursor = connection.cursor()
         cursor.execute(
-            f'select add_product_to_order("{product_id}", "{quantity}", "{customer_id}", "{address_id}", "{size}");')
+            f'select add_product_to_order("{product_id}", "{quantity}", "{customer_id}", "{size}");')
         result = cursor.fetchall()
 
         connection.commit()
@@ -473,6 +480,25 @@ class FilterProducts(Resource):
         return result
 
 
+class GetId(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('email', type=str, required=False)
+
+    def post(self):
+        args = self.parser.parse_args()
+        email = args['email']
+
+        cursor = connection.cursor()
+        cursor.execute(f'select customer_id from customers where email = "{email}";')
+        result = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        return result
+
+
 api.add_resource(CustomerRegistration, '/customer_registration', methods=['POST'])
 api.add_resource(CustomerLogin, '/customer_login', methods=['POST'])
 api.add_resource(UpdateAddress, '/update_address', methods=['POST'])
@@ -488,6 +514,7 @@ api.add_resource(Purchase, '/purchase', methods=['POST'])
 api.add_resource(ChangeProduct, '/change_product', methods=['POST'])
 api.add_resource(DeleteProduct, '/delete_product', methods=['POST'])
 api.add_resource(FilterProducts, '/filter_products', methods=['POST'])
+api.add_resource(GetId, '/get_id', methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
