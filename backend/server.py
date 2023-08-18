@@ -496,7 +496,10 @@ class GetId(Resource):
         connection.commit()
         cursor.close()
 
-        return result
+        if result:
+            return jsonify(result)
+        else:
+            return Response('{"message":"There is no customer with this email."}', status=404, mimetype='application/json')
 
 
 class GetCustomerData(Resource):
@@ -516,7 +519,10 @@ class GetCustomerData(Resource):
         cursor.close()
         connection.commit()
 
-        return result
+        if result:
+            return jsonify(result)
+        else:
+            return Response('{"message":"There is no customer data."}', status=404, mimetype='application/json')
 
 
 class GetOrderData(Resource):
@@ -536,7 +542,10 @@ class GetOrderData(Resource):
         cursor.close()
         connection.commit()
 
-        return result
+        if result:
+            return jsonify(result)
+        else:
+            return Response('{"message":"There is no current order."}', status=404, mimetype='application/json')
 
 
 api.add_resource(CustomerRegistration, '/customer_registration', methods=['POST'])
