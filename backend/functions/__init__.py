@@ -19,3 +19,12 @@ def build_filter_query(name, min_price, max_price, brand, color_1, color_2, colo
             f'and (gender = {gender} or {gender} is null);'
 
     return query
+
+
+def build_get_customer_data_query(current_customer_id):
+    query = f'select c.first_name, c.last_name, c.email, c.phone_number, a.country, a.city, a.street, a.house_number, a.postal_code ' \
+            f'from customers c ' \
+            f'join addresses a on c.address_id = a.address_id ' \
+            f'where customer_id = {current_customer_id};'
+
+    return query
