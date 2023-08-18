@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, Response
 from flask_restful import Resource, Api, reqparse
 import mysql.connector
-from functions import format_results, build_filter_query, build_get_customer_data_query
+from functions import format_results, build_filter_query, build_get_customer_data_query, build_get_order_query
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 
@@ -519,6 +519,26 @@ class GetCustomerData(Resource):
         return result
 
 
+class GetOrderData(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('customer_id', type=int, required=True)
+
+    def post(self):
+        args = self.parser.parse_args()
+        customer_id = args['customer_id']
+
+        cursor = connection.cursor()
+        query = build_get_order_query(current_customer_id=customer_id)
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        cursor.close()
+        connection.commit()
+
+        return result
+
+
 api.add_resource(CustomerRegistration, '/customer_registration', methods=['POST'])
 api.add_resource(CustomerLogin, '/customer_login', methods=['POST'])
 api.add_resource(UpdateAddress, '/update_address', methods=['POST'])
@@ -536,6 +556,7 @@ api.add_resource(DeleteProduct, '/delete_product', methods=['POST'])
 api.add_resource(FilterProducts, '/filter_products', methods=['POST'])
 api.add_resource(GetId, '/get_id', methods=['POST'])
 api.add_resource(GetCustomerData, '/get_customer_data', methods=['POST'])
+api.add_resource(GetOrderData, '/get_order_data', methods=['POST'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
