@@ -28,3 +28,18 @@ begin
       and (release_year = filter_release_year or filter_release_year is null)
       and (gender = filter_product_gender or filter_product_gender is null);
 end;
+
+
+##### GET CUSTOMER DATA #####
+
+# search for a customer with the following id and returns his or her data
+
+create procedure get_profile_data(
+    current_customer_id int
+)
+begin
+    select c.first_name, c.last_name, c.email, c.phone_number, a.country, a.city, a.street, a.house_number, a.postal_code
+    from customers c
+    join addresses a on c.address_id = a.address_id
+    where customer_id = current_customer_id;
+end;
