@@ -5,3 +5,4 @@ jsonpickle
 flask_mysqldb
 werkzeug
 requests
+flask-cors
