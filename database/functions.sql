@@ -38,7 +38,7 @@ create function customer_registration(
     new_street varchar(30),
     new_house_number varchar(10),
     new_postal_code varchar(10)
-) returns varchar(30) deterministic
+) returns int deterministic
 begin
     declare email_in_use int;
     declare phone_number_in_use int;
@@ -58,12 +58,12 @@ begin
             # create new customer
             insert into customers(first_name, last_name, email, phone_number, password_, address_id)
                 values (new_first_name, new_last_name, new_email, new_phone_number, new_password_, @result_id);
-            return 'Customer registered';
+            return 1;
         else
-            return 'Phone number is already in use';
+            return 0;
         end if;
     else
-        return 'Email is already in use';
+        return -1;
     end if;
 end;
 
@@ -245,7 +245,6 @@ create function add_product_to_order(
     chosen_product_id int,
     chosen_quantity int,
     current_customer_id int,
-    customer_address_id int,
     chosen_size float
 ) returns varchar(100) deterministic
 begin
@@ -253,6 +252,10 @@ begin
     declare product_in_order int;
     declare in_stock int;
     declare current_quantity int;
+    declare customer_address_id int;
+
+    # get address_id
+    select address_id into customer_address_id from customers where customer_id = current_customer_id;
 
     # check availability of product for a given address
     set in_stock = check_availability(chosen_product_id, customer_address_id, chosen_quantity, chosen_size);
