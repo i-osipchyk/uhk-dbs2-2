@@ -9,17 +9,7 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-connection = mysql.connector.connect(
-    user='root',
-    password='password',
-    # host='database',
-    # port='3306',
-    database='shop',
-    auth_plugin='mysql_native_password'
-)
 
-
-# tested
 class CustomerRegistration(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -49,6 +39,14 @@ class CustomerRegistration(Resource):
 
         password_hash = generate_password_hash(password)
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select customer_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", '
                        f'"{password_hash}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
@@ -64,7 +62,6 @@ class CustomerRegistration(Resource):
             return Response("{'message': 'Email is already in use'}", status=409, mimetype='application/json')
 
 
-# tested
 class CustomerLogin(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -76,6 +73,14 @@ class CustomerLogin(Resource):
         email = args['email']
         password = args['password']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select customer_login("{email}");')
         existing_password_hash = cursor.fetchall()[0][0]
@@ -89,7 +94,6 @@ class CustomerLogin(Resource):
             return Response('{"message": "Credentials are incorrect"}', status=401, mimetype="application/json")
 
 
-# tested
 class UpdateAddress(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -109,18 +113,28 @@ class UpdateAddress(Resource):
         house_number = args['house_number']
         postal_code = args['postal_code']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(
             f'select update_address("{customer_id}", "{country}", "{city}", "{street}", "{house_number}", "{postal_code}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response('{"message": "Address was changed successfully."}', status=200, mimetype="application/json")
+        else:
+            return Response('{"message": "Something went wrong. Please, try again."}', status=500, mimetype="application/json")
 
 
-# tested
 class AddProductToOrder(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -136,18 +150,35 @@ class AddProductToOrder(Resource):
         quantity = args['quantity']
         size = args['size']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(
             f'select add_product_to_order("{product_id}", "{quantity}", "{customer_id}", "{size}");')
-        result = cursor.fetchall()
+        message = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        status_code = 500
+        if message.split(' ')[0] == 'This':
+            status_code = 500
+        if message.split(' ')[0] == 'Item':
+            status_code = 200
+        if message.split(' ')[0] == 'Quantity':
+            status_code = 200
+        if message.split(' ')[0] == 'There':
+            status_code = 500
+
+        return Response(f'{"message": "{message}"}', status=status_code, mimetype="application/json")
 
 
-# tested
 class UpdateQuantity(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -161,17 +192,27 @@ class UpdateQuantity(Resource):
         product_id = args['product_id']
         quantity = args['quantity']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select update_quantity("{customer_id}", "{product_id}", "{quantity}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response('{"message": "Quantity was updated successfully"}', status=200, mimetype="application/json")
+        else:
+            return Response('{"message": "Something went wrong. Please try again."}', status=500, mimetype="application/json")
 
 
-# tested
 class RemoveItemFromOrder(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -183,17 +224,27 @@ class RemoveItemFromOrder(Resource):
         product_id = args['product_id']
         customer_id = args['customer_id']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select remove_from_order("{product_id}", "{customer_id}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response('{"message": "Item removed successfully."}', status=200, mimetype="application/json")
+        else:
+            return Response('{"message": "Something went wrong. Please try again."}', status=500, mimetype="application/json")
 
 
-# tested
 class AdminRegistration(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -215,18 +266,30 @@ class AdminRegistration(Resource):
 
         password_hash = generate_password_hash(password)
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(
             f'select admin_registration("{first_name}", "{last_name}", "{email}", "{phone_number}", "{password_hash}", "{reference_code}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 1:
+            return Response("{'message': 'Customer registered'}", status=200, mimetype='application/json')
+        elif result == 0:
+            return Response("{'message': 'Phone number is already in use'}", status=409, mimetype='application/json')
+        else:
+            return Response("{'message': 'Email is already in use'}", status=409, mimetype='application/json')
 
 
-# tested
 class AdminLogin(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -238,6 +301,14 @@ class AdminLogin(Resource):
         email = args['email']
         password = args['password']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select admin_login("{email}");')
         existing_password_hash = cursor.fetchall()[0][0]
@@ -245,10 +316,12 @@ class AdminLogin(Resource):
         connection.commit()
         cursor.close()
 
-        return check_password_hash(existing_password_hash, password)
+        if check_password_hash(existing_password_hash, password):
+            return Response("{'message': 'Credentials are correct'}", status=200, mimetype='application/json')
+        else:
+            return Response('{"message": "Credentials are incorrect"}', status=401, mimetype="application/json")
 
 
-# tested
 class AddStorage(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -260,17 +333,27 @@ class AddStorage(Resource):
         country = args['country']
         city = args['city']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select add_storage("{country}", "{city}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response("{'message': 'Storage added successfully.'}", status=200, mimetype='application/json')
+        else:
+            return Response("{'message': 'Something wend wrong. Please, try again'}", status=500, mimetype='application/json')
 
 
-# tested
 class AddProduct(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -298,18 +381,30 @@ class AddProduct(Resource):
         gender = args['gender']
         description = args['description']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(
             f'select add_product("{name}", "{price}", "{brand}", "{color_1}", "{color_2}", "{color_3}", "{category}", "{release_year}", "{gender}", "{description}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response("{'message': 'Product added successfully.}", status=200, mimetype='application/json')
+        elif result == 1:
+            return Response("{'message': 'Product already exists.'}", status=200, mimetype='application/json')
+        else:
+            return Response("{'message': 'Something went wrong. Please, try again.'}", status=500, mimetype='application/json')
 
 
-# tested
 class AddProductToStorage(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -333,38 +428,59 @@ class AddProductToStorage(Resource):
         city = args['city']
         quantity = args['quantity']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(
             f'select add_product_to_storage("{name}", "{color_1}", "{color_2}", "{color_3}", "{gender}", "{size}", "{city}", "{quantity}");')
-        result = cursor.fetchall()
+        message = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if message.split(' ')[0] == 'There':
+            return Response(f"{'message': '{message}'}", status=500, mimetype='application/json')
+        else:
+            return Response(f"{'message': '{message}'}", status=200, mimetype='application/json')
 
 
-# tested
 class Purchase(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('customer_id', type=str, required=True)
+        self.parser.add_argument('customer_id', type=int, required=True)
 
     def post(self):
         args = self.parser.parse_args()
         customer_id = args['customer_id']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select purchase("{customer_id}");')
-        result = cursor.fetchall()
+        message = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        status_code = 200
+        if message.split(' ')[0] == 'There' or message.split(' ')[0] == 'Some':
+            status_code = 404
+
+        return Response(f"{'message': '{message}'}", status=status_code, mimetype='application/json')
 
 
-# tested
 class ChangeProduct(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -402,18 +518,28 @@ class ChangeProduct(Resource):
         new_release_year = f"\"{args['new_release_year']}\"" if args['new_release_year'] is not None else 'null'
         new_description = f"\"{args['new_description']}\"" if args['new_description'] is not None else 'null'
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(
             f'select change_product("{name}", "{color_1}", "{color_2}", "{color_3}", "{gender}", {new_name}, {new_color_1}, {new_color_2}, {new_color_3}, {new_gender}, {new_price}, {new_brand}, {new_category}, {new_release_year}, {new_description});')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response("{'message': 'Product was changed successfully.'}", status=200, mimetype='application/json')
+        else:
+            return Response("{'message': 'Product does not exist.'}", status=500, mimetype='application/json')
 
 
-# tested
 class DeleteProduct(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -431,17 +557,27 @@ class DeleteProduct(Resource):
         color_3 = args['color_3']
         gender = args['gender']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select delete_product("{name}", "{color_1}", "{color_2}", "{color_3}", "{gender}");')
-        result = cursor.fetchall()
+        result = cursor.fetchall()[0][0]
 
         connection.commit()
         cursor.close()
 
-        return result
+        if result == 0:
+            return Response("{'message': 'Product was deleted successfully.'}", status=200, mimetype='application/json')
+        else:
+            return Response("{'message': 'Product does not exist.'}", status=500, mimetype='application/json')
 
 
-# tested
 class FilterProducts(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -469,6 +605,14 @@ class FilterProducts(Resource):
         release_year = args['release_year'] if args['release_year'] is not None else 'null'
         gender = f"\"{args['gender']}\"" if args['gender'] is not None else 'null'
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         query = build_filter_query(name, min_price, max_price, brand, color_1, color_2, color_3, category, release_year, gender)
         cursor.execute(query)
@@ -477,7 +621,10 @@ class FilterProducts(Resource):
         cursor.close()
         connection.commit()
 
-        return result
+        if result:
+            return result
+        else:
+            return Response('{"message":"There aren\'t any products."}', status=404, mimetype='application/json')
 
 
 class GetId(Resource):
@@ -489,6 +636,14 @@ class GetId(Resource):
         args = self.parser.parse_args()
         email = args['email']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         cursor.execute(f'select customer_id from customers where email = "{email}";')
         result = cursor.fetchall()
@@ -511,6 +666,14 @@ class GetCustomerData(Resource):
         args = self.parser.parse_args()
         customer_id = args['customer_id']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         query = build_get_customer_data_query(current_customer_id=customer_id)
         cursor.execute(query)
@@ -534,6 +697,14 @@ class GetOrderData(Resource):
         args = self.parser.parse_args()
         customer_id = args['customer_id']
 
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
         cursor = connection.cursor()
         query = build_get_order_query(current_customer_id=customer_id)
         cursor.execute(query)
