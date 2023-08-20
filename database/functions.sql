@@ -102,7 +102,7 @@ create function update_address(
     new_street varchar(30),
     new_house_number varchar(10),
     new_postal_code varchar(10)
-) returns varchar(100) deterministic
+) returns int deterministic
 begin
     # get id of the address
     set @new_address_id = find_or_insert_address(new_country, new_city, new_street, new_house_number, new_postal_code);
@@ -112,7 +112,7 @@ begin
     set address_id = @new_address_id
     where customer_id = customer_id_;
 
-    return 'Address was changed';
+    return 0;
 end;
 
 ##### ADD PRODUCT TO BASKET #####
@@ -322,7 +322,7 @@ create function update_quantity(
     current_customer_id int,
     chosen_product_id int,
     new_quantity int
-) returns varchar(100) deterministic
+) returns int deterministic
 begin
     declare current_order int;
     declare product_price float;
@@ -350,7 +350,7 @@ begin
     set price = price - item_price + product_price * new_quantity
     where order_id = current_order;
 
-    return 'Quantity was updated successfully';
+    return 0;
 end;
 
 
@@ -361,7 +361,7 @@ end;
 create function remove_from_order(
     chosen_product_id int,
     current_customer_id int
-) returns varchar(100) deterministic
+) returns int deterministic
 begin
     declare item_price float;
     declare current_order int;
@@ -383,7 +383,7 @@ begin
     delete from order_items
     where order_id = current_order and product_id = chosen_product_id;
 
-    return 'Item deleted successfully';
+    return 0;
 end;
 
 
@@ -474,11 +474,11 @@ end;
 create function add_storage(
     storage_country varchar(20),
     storage_city varchar(20)
-) returns varchar(30) deterministic
+) returns int deterministic
 begin
     # insert into storages
     insert into storages(country, city) values (storage_country, storage_city);
-    return 'Storage added successfully';
+    return 0;
 end;
 
 
@@ -497,7 +497,7 @@ create function add_product(
     product_release_year int,
     product_gender varchar(6),
     product_description varchar(500)
-) returns varchar(30) deterministic
+) returns int deterministic
 begin
     declare existing_product_id int;
 
@@ -513,10 +513,10 @@ begin
         insert into products(name_, price, brand, color_1, color_2, color_3, category, release_year, gender, description_)
         values (product_name, product_price, product_brand, product_color_1, product_color_2, product_color_3, product_category, product_release_year, product_gender, product_description);
 
-        return 'Product added successfully';
+        return 0;
     else
         # if exists
-        return 'Product already exists';
+        return 1;
     end if;
 end;
 
@@ -660,7 +660,7 @@ create function change_product(
     product_category_ch varchar(10),
     product_release_year_ch int,
     product_description_ch varchar(500)
-) returns varchar(50) deterministic
+) returns int deterministic
 begin
     declare product_to_change_id int;
 
@@ -732,9 +732,9 @@ begin
             where product_id = product_to_change_id;
         end if;
 
-        return 'Product was changed successfully';
+        return 0;
     else
-        return 'Product does not exist';
+        return 1;
     end if;
 end;
 # TODO: change prices in orders
@@ -753,7 +753,7 @@ create function delete_product(
     product_color_2 varchar(10),
     product_color_3 varchar(10),
     product_gender varchar(6)
-) returns varchar(50) deterministic
+) returns int deterministic
 begin
     declare product_to_delete_id int;
 
@@ -765,7 +765,7 @@ begin
           gender = product_gender;
 
     if product_to_delete_id is null then
-        return 'Product does not exist';
+        return 1;
     else
         delete from order_items
         where product_id = product_to_delete_id;
@@ -776,7 +776,7 @@ begin
         delete from products
         where product_id = product_to_delete_id;
 
-        return 'Product was deleted successfully';
+        return 0;
     end if;
 end;
 
