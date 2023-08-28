@@ -32,6 +32,7 @@
     "no-use-before-define": "off",
     "no-else-return": "off",
     "no-lonely-if": "off",
-    "no-nested-ternary": "off"
+    "no-nested-ternary": "off",
+    "no-restricted-syntax": "warn"
   }
 }

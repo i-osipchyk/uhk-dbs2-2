@@ -31,11 +31,11 @@ body {
 }
 @layer components {
   .loginPageInput {
-    @apply p-2 bg-transparent placeholder:text-gray-400 border w-full focus:outline-none border-loginPageBorder;
+    @apply p-2 bg-transparent placeholder:text-gray-400 border w-full focus:outline-none border-darkerOrange;
   }
 
   .navbarUserButton {
-    @apply flex items-center justify-center h-[40px] w-[40px] rounded-full hover:bg-gray-300;
+    @apply flex items-center justify-center rounded-full h-[40px] w-[40px] border-white hover:border-2 hover:border-mainOrange transitionDuration;
   }
 }
 

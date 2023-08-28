@@ -10,7 +10,7 @@ export default function Hero() {
           <p>
             Use code <span className='font-[700]'>FF2023</span> at checkout
           </p>
-          <button className='mt-[50px] text-[20px] font-[700] w-[250px] h-[68px] rounded-full bg-[#D14836] text-white'>
+          <button className='mt-[50px] text-[20px] font-[700] w-[250px] h-[68px] rounded-full bg-mainOrange text-white'>
             SHOP NOW
           </button>
         </div>

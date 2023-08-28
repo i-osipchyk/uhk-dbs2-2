@@ -1,12 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 import LoginMethod from '../components/LoginPage/LoginMethod'
 import LoginForm from '../components/LoginPage/LoginForm'
 
 export default function login() {
   const [loginOption, setLoginOption] = useState('user')
-  const [signUp, setSignUp] = useState(true)
+  const [signUp, setSignUp] = useState(false)
   const [formData, setFormData] = useState({})
+  const [repeatPassword, setRepeatPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const { push } = useRouter()
 
@@ -14,9 +18,75 @@ export default function login() {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  const loginUser = async () => {
+    const endpoint = loginOption === 'user' ? 'customer_login' : 'admin_login'
+    const config = {
+      method: 'post',
+      url: `http://127.0.0.1:5000/${endpoint}`,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: formData
+    }
+
+    await axios(config)
+      .then(() => {
+        Cookies.set('user_email', formData.email)
+        push('/')
+      })
+      .catch((err) => setErrorMessage(err.response.data.message))
+  }
+
+  // const getProduct = async () => {
+  //   const config = {
+  //     method: 'post',
+  //     url: `http://127.0.0.1:5000/get_id`,
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     data: { email: 'denis@denis.denis' }
+  //   }
+
+  //   await axios(config)
+  //     .then((res) => console.log(res.json()))
+  //     .catch((err) => console.error(err))
+  // }
+
+  // useEffect(() => {
+  //   getProduct()
+  // }, [])
+
+  const registerUser = async () => {
+    console.log('Data', JSON.stringify(formData))
+    const endpoint =
+      loginOption === 'user' ? 'customer_registration' : 'admin_registration'
+    const config = {
+      method: 'post',
+      url: `http://127.0.0.1:5000/${endpoint}`,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: formData
+    }
+
+    await axios(config)
+      .then(() => {
+        Cookies.set('user_email', formData.email)
+        push('/')
+      })
+      .catch((err) => {
+        const { data } = err.response
+        console.log(data)
+      })
+  }
+
   function handleFormSubmit(e) {
     e.preventDefault()
-    push('/')
+    if (signUp) {
+      registerUser()
+    } else {
+      loginUser()
+    }
   }
 
   return (
@@ -27,19 +97,23 @@ export default function login() {
           setUserLoginOption={() => {
             setLoginOption('user')
             setFormData({})
+            setErrorMessage('')
           }}
           setAdminLoginOption={() => {
             setLoginOption('admin')
             setFormData({})
+            setErrorMessage('')
           }}
           signUp={signUp}
           setSignUp={() => {
             setSignUp(true)
             setFormData({})
+            setErrorMessage('')
           }}
           setSignin={() => {
             setSignUp(false)
             setFormData({})
+            setErrorMessage('')
           }}
         />
         <LoginForm
@@ -48,6 +122,9 @@ export default function login() {
           handleInputChange={() => handleInputChange}
           handleFormSubmit={() => handleFormSubmit}
           formData={formData}
+          repeatPassword={repeatPassword}
+          setRepeatPassword={(text) => setRepeatPassword(text)}
+          errorMessage={errorMessage}
         />
       </div>
     </div>

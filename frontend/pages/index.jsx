@@ -1,12 +1,27 @@
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import BrandButton from '../components/BrandButton'
 import Hero from '../components/Hero'
-import Navbar from '../components/Navbar/Navbar'
 import SelectionButton from '../components/SelectionButton'
 
 export default function Home() {
+  const { push } = useRouter()
+
+  const email = Cookies.get('user_email')
+  useEffect(() => {
+    if (!email) {
+      push('/login')
+    }
+  }, [])
+  console.log(email)
+
+  const logoutUser = () => {
+    Cookies.remove('user_email')
+    push('/login')
+  }
   return (
-    <div className='flex flex-col mx-auto w-[100%] max-w-[1200px]'>
-      <Navbar />
+    <div className='flex flex-col mx-auto w-full max-w-[1200px]'>
       <Hero />
       <div className='flex justify-between mt-[50px]'>
         <BrandButton img='/nike.png' alt='nike' />
@@ -39,6 +54,7 @@ export default function Home() {
           BACK IN STOCK
         </span>
       </div>
+      <button onClick={logoutUser}>LOGOUT</button>
     </div>
   )
 }

@@ -4,6 +4,9 @@ export default function LoginForm({
   formData,
   handleInputChange,
   handleFormSubmit,
+  repeatPassword,
+  setRepeatPassword,
+  errorMessage
 }) {
   return (
     <form>
@@ -13,8 +16,7 @@ export default function LoginForm({
             <div className={`${loginOption === 'user' && 'flex'} my-auto px-5`}>
               <div
                 className={`flex flex-col gap-2 items-center ${
-                  loginOption === 'user' &&
-                  'pr-5 border-r border-loginPageBorder'
+                  loginOption === 'user' && 'pr-5 border-r border-darkerOrange'
                 }`}
               >
                 {loginOption === 'user' && (
@@ -24,16 +26,16 @@ export default function LoginForm({
                   type='text'
                   className='loginPageInput'
                   placeholder='First Name'
-                  name='firstName'
-                  value={formData.firstName ? formData.firstName : ''}
+                  name='first_name'
+                  value={formData.first_name ? formData.first_name : ''}
                   onChange={handleInputChange()}
                 />
                 <input
                   type='text'
                   className='loginPageInput'
-                  placeholder='Second Name'
-                  name='secondName'
-                  value={formData.secondName ? formData.secondName : ''}
+                  placeholder='Last Name'
+                  name='last_name'
+                  value={formData.last_name ? formData.last_name : ''}
                   onChange={handleInputChange()}
                 />
                 <input
@@ -48,8 +50,8 @@ export default function LoginForm({
                   type='text'
                   className='loginPageInput'
                   placeholder='Phone Number'
-                  name='phoneNumber'
-                  value={formData.phoneNumber ? formData.phoneNumber : ''}
+                  name='phone_number'
+                  value={formData.phone_number ? formData.phone_number : ''}
                   onChange={handleInputChange()}
                 />
                 <input
@@ -65,16 +67,18 @@ export default function LoginForm({
                   className='loginPageInput'
                   placeholder='Repeat Password'
                   name='repeatPassword'
-                  value={formData.repeatPassword ? formData.repeatPassword : ''}
-                  onChange={handleInputChange()}
+                  value={repeatPassword}
+                  onChange={(e) => setRepeatPassword(e.target.value)}
                 />
                 {loginOption === 'admin' && (
                   <input
                     type='text'
                     className='loginPageInput'
-                    placeholder='Admin Code'
-                    name='adminCode'
-                    value={formData.adminCode ? formData.adminCode : ''}
+                    placeholder='Reference Code'
+                    name='reference_code'
+                    value={
+                      formData.reference_code ? formData.reference_code : ''
+                    }
                     onChange={handleInputChange()}
                   />
                 )}
@@ -109,28 +113,29 @@ export default function LoginForm({
                   <input
                     type='text'
                     className='loginPageInput'
-                    placeholder='House'
-                    name='house'
-                    value={formData.house ? formData.house : ''}
+                    placeholder='House Number'
+                    name='house_number'
+                    value={formData.house_number ? formData.house_number : ''}
                     onChange={handleInputChange()}
                   />
                   <input
                     type='text'
                     className='loginPageInput'
                     placeholder='Postal Code'
-                    name='postalCode'
-                    value={formData.postalCode ? formData.postalCode : ''}
+                    name='postal_code'
+                    value={formData.postal_code ? formData.postal_code : ''}
                     onChange={handleInputChange()}
                   />
                 </div>
               )}
+              <p className='text-mainOrange h-[22.5px]'>{errorMessage}</p>
             </div>
           ) : (
             <div className='flex flex-col gap-2 items-center my-auto'>
               <input
                 type='email'
                 className='loginPageInput'
-                placeholder='Mail'
+                placeholder='Email'
                 name='email'
                 value={formData.email ? formData.email : ''}
                 onChange={handleInputChange()}
@@ -143,10 +148,12 @@ export default function LoginForm({
                 value={formData.password ? formData.password : ''}
                 onChange={handleInputChange()}
               />
+              <p className='text-mainOrange h-[22.5px]'>{errorMessage}</p>
             </div>
           )}
+
           <button
-            className='p-5 border-t text-loginPageButton border-loginPageBorder hover:bg-loginPageButton hover:text-white hover:border-loginPageButton transitionDuration w-[400px]'
+            className='p-5 border-t text-mainOrange border-darkerOrange hover:bg-mainOrange hover:text-white hover:border-mainOrange transitionDuration w-[400px]'
             onClick={handleFormSubmit()}
           >
             {signUp ? 'Sign Up' : 'Sign In'}
