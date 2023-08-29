@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <div className='w-full h-[450px] flex mt-[25px]'>
+    <div className='w-full h-[450px] flex mt-[50px]'>
       <div className='flex flex-col h-full items-center justify-center'>
         <div className='flex flex-col items-start text-[14px]'>
           <h1 className='text-[50px] font-[700] mb-[12.5px]'>

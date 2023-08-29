@@ -6,7 +6,7 @@ import LoginMethod from '../components/LoginPage/LoginMethod'
 import LoginForm from '../components/LoginPage/LoginForm'
 
 export default function login() {
-  const [loginOption, setLoginOption] = useState('user')
+  const [loginOption, setLoginOption] = useState('customer')
   const [signUp, setSignUp] = useState(false)
   const [formData, setFormData] = useState({})
   const [repeatPassword, setRepeatPassword] = useState('')
@@ -19,19 +19,24 @@ export default function login() {
   }
 
   const loginUser = async () => {
-    const endpoint = loginOption === 'user' ? 'customer_login' : 'admin_login'
+    const endpoint =
+      loginOption === 'customer' ? 'customer_login' : 'admin_login'
     const config = {
       method: 'post',
       url: `http://127.0.0.1:5000/${endpoint}`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      data: formData
+      data: formData,
     }
 
     await axios(config)
       .then(() => {
         Cookies.set('user_email', formData.email)
+        Cookies.set(
+          'user_type',
+          loginOption === 'customer' ? 'customer' : 'admin'
+        )
         push('/')
       })
       .catch((err) => setErrorMessage(err.response.data.message))
@@ -59,14 +64,16 @@ export default function login() {
   const registerUser = async () => {
     console.log('Data', JSON.stringify(formData))
     const endpoint =
-      loginOption === 'user' ? 'customer_registration' : 'admin_registration'
+      loginOption === 'customer'
+        ? 'customer_registration'
+        : 'admin_registration'
     const config = {
       method: 'post',
       url: `http://127.0.0.1:5000/${endpoint}`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      data: formData
+      data: formData,
     }
 
     await axios(config)
@@ -95,7 +102,7 @@ export default function login() {
         <LoginMethod
           loginOption={loginOption}
           setUserLoginOption={() => {
-            setLoginOption('user')
+            setLoginOption('customer')
             setFormData({})
             setErrorMessage('')
           }}

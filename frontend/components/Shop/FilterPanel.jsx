@@ -3,7 +3,7 @@ import ShowFilterPanelButton from './ShowFilterPanelButton'
 
 export default function FilterPanel({
   isFilterPanelOpen,
-  setIsFilterPanelOpen
+  setIsFilterPanelOpen,
 }) {
   const [sex, setSex] = useState('')
   return (
@@ -19,7 +19,32 @@ export default function FilterPanel({
       </div>
       <div className='w-full h-full flex flex-col p-[20px] gap-[20px] text-xl'>
         <div className='flex items-center gap-[20px]'>
-          <span>SEX</span>
+          <span className='w-[70px]'>NAME</span>
+          <input
+            type='text'
+            className='w-[100px] text-lg outline-none border-b border-black'
+          />
+        </div>
+        <div className='flex items-center gap-[20px]'>
+          <span className='w-[70px]'>PRICE</span>
+          <div className='flex items-center gap-[10px]'>
+            <input
+              type='number'
+              min={0}
+              step={100}
+              className='w-[100px] text-lg outline-none border-b border-black'
+            />
+            <span>-</span>
+            <input
+              type='number'
+              min={0}
+              step={100}
+              className='w-[100px] text-lg outline-none border-b border-black'
+            />
+          </div>
+        </div>
+        <div className='flex items-center gap-[20px]'>
+          <span className='w-[70px]'>SEX</span>
           <div className='flex items-center w-[100px]'>
             <button
               className={`flex-1 border border-black ${
@@ -40,7 +65,7 @@ export default function FilterPanel({
           </div>
         </div>
         <div className='flex items-center gap-[20px]'>
-          <span>BRAND</span>
+          <span className='w-[70px]'>BRAND</span>
           <input
             type='text'
             className='w-[100px] text-lg outline-none border-b border-black'

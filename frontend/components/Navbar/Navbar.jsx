@@ -24,7 +24,7 @@ export default function Navbar({ currentRoute }) {
   const navigationButtons = ['home', 'shop']
 
   return (
-    <div className='h-[80px] flex items-center w-full p-[20px] mx-auto justify-between'>
+    <div className='h-[80px] flex items-center w-full p-[20px] mx-auto justify-between shadow-md relative'>
       <div className='w-[100px]'>
         <img src='/logo.png' alt='logo' />
       </div>

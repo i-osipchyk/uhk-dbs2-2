@@ -17,9 +17,9 @@ export default function Shop() {
       method: 'post',
       url: `http://127.0.0.1:5000/get_customer_data`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      data: { customer_id: 3 }
+      data: { customer_id: 3 },
     }
 
     // const data = { email: 'denis@denis.denis', password: 'denisdenis' }

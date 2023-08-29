@@ -8,16 +8,16 @@ import SelectionButton from '../components/SelectionButton'
 export default function Home() {
   const { push } = useRouter()
 
-  const email = Cookies.get('user_email')
-  useEffect(() => {
-    if (!email) {
-      push('/login')
-    }
-  }, [])
-  console.log(email)
+  // const email = Cookies.get('user_email')
+  // useEffect(() => {
+  //   if (!email) {
+  //     push('/login')
+  //   }
+  // }, [])
 
   const logoutUser = () => {
     Cookies.remove('user_email')
+    Cookies.remove('user_type')
     push('/login')
   }
   return (

@@ -4,20 +4,20 @@ export default function LoginMethod({
   setAdminLoginOption,
   signUp,
   setSignUp,
-  setSignin
+  setSignin,
 }) {
   return (
     <div className='w-[400px] flex flex-col shadow-loginPage bg-white border-2 border-white overflow-hidden text-mainOrange'>
       <div className='flex items-center justify-center h-[70px] w-full'>
         <button
           className={`w-full h-full border-b-2 transitionDuration ${
-            loginOption === 'user'
+            loginOption === 'customer'
               ? 'bg-mainOrange text-white border-white'
               : 'border-mainOrange bg-white'
-          } ${loginOption === 'user' && signUp && 'border-mainOrange'}`}
+          } ${loginOption === 'customer' && signUp && 'border-mainOrange'}`}
           onClick={setUserLoginOption}
         >
-          User
+          Customer
         </button>
         <button
           className={`w-full h-full border-b-2 transitionDuration ${
