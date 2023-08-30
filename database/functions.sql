@@ -404,7 +404,7 @@ create function admin_registration(
     new_phone_number varchar(15),
     new_password varchar(1000),
     reference_code_ varchar(10)
-) returns varchar(30) deterministic
+) returns int deterministic
 begin
     declare reference_code_exists varchar(10);
     declare email_in_use int;
@@ -428,18 +428,18 @@ begin
                 # create admin
                 insert into admins(first_name, last_name, email, phone_number, password_)
                     values (new_first_name, new_last_name, new_email, new_phone_number, new_password);
-                return 'Admin registered';
+                return 0;
             else
                 # if invalid
-                return 'Invalid reference code';
+                return 1;
             end if;
         else
             # if phone number is in use
-            return 'Phone number is already in use';
+            return 2;
         end if;
     else
         # if email is in use
-        return 'Email is already in use';
+        return 3;
     end if;
 end;
 
