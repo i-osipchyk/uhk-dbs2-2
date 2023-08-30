@@ -645,11 +645,7 @@ end;
 # if not, return message
 
 create function change_product(
-    product_name varchar(20),
-    product_color_1 varchar(10),
-    product_color_2 varchar(10),
-    product_color_3 varchar(10),
-    product_gender varchar(6),
+    product_to_change_id int,
     product_name_ch varchar(20),
     product_color_1_ch varchar(10),
     product_color_2_ch varchar(10),
@@ -662,14 +658,6 @@ create function change_product(
     product_description_ch varchar(500)
 ) returns int deterministic
 begin
-    declare product_to_change_id int;
-
-    select product_id into product_to_change_id from products
-    where name_ = product_name and
-          color_1 = product_color_1 and
-          color_2 = product_color_2 and
-          color_3 = product_color_3 and
-          gender = product_gender;
 
     if product_to_change_id is not null then
         if product_name_ch is not null then
@@ -748,22 +736,9 @@ end;
 # if yes, delete all order items, products in storages and products with its id, return message
 
 create function delete_product(
-    product_name varchar(20),
-    product_color_1 varchar(10),
-    product_color_2 varchar(10),
-    product_color_3 varchar(10),
-    product_gender varchar(6)
+    product_to_delete_id int
 ) returns int deterministic
 begin
-    declare product_to_delete_id int;
-
-    select product_id into product_to_delete_id from products
-    where name_ = product_name and
-          color_1 = product_color_1 and
-          color_2 = product_color_2 and
-          color_3 = product_color_3 and
-          gender = product_gender;
-
     if product_to_delete_id is null then
         return 1;
     else
