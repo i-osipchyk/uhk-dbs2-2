@@ -282,10 +282,12 @@ class AdminRegistration(Resource):
         connection.commit()
         cursor.close()
 
-        if result == 1:
-            return Response("{'message': 'Customer registered'}", status=200, mimetype='application/json')
-        elif result == 0:
-            return Response("{'message': 'Phone number is already in use'}", status=409, mimetype='application/json')
+        if result == 0:
+            return Response("{'message': 'Admin registered'}", status=200, mimetype='application/json')
+        elif result == 1:
+            return Response("{'message': 'Invalid reference code'}", status=409, mimetype='application/json')
+        elif result == 2:
+            return Response("{'message': 'Phone number is already in use}", status=409, mimetype='application/json')
         else:
             return Response("{'message': 'Email is already in use'}", status=409, mimetype='application/json')
 
