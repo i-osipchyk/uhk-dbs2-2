@@ -167,16 +167,10 @@ class AddProductToOrder(Resource):
         cursor.close()
 
         status_code = 500
-        if message.split(' ')[0] == 'This':
-            status_code = 500
-        if message.split(' ')[0] == 'Item':
+        if message.split(' ')[0] == 'Quantity' or message.split(' ')[0] == 'Item':
             status_code = 200
-        if message.split(' ')[0] == 'Quantity':
-            status_code = 200
-        if message.split(' ')[0] == 'There':
-            status_code = 500
-
-        return Response(f'{"message": "{message}"}', status=status_code, mimetype="application/json")
+        print(message)
+        return Response(message, status=status_code, mimetype="application/json")
 
 
 class UpdateQuantity(Resource):
@@ -218,11 +212,13 @@ class RemoveItemFromOrder(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('product_id', type=str, required=True)
         self.parser.add_argument('customer_id', type=str, required=True)
+        self.parser.add_argument('size', type=float, required=True)
 
     def post(self):
         args = self.parser.parse_args()
         product_id = args['product_id']
         customer_id = args['customer_id']
+        size = args['size']
 
         connection = mysql.connector.connect(
             user='root',
@@ -233,7 +229,7 @@ class RemoveItemFromOrder(Resource):
             auth_plugin='mysql_native_password'
         )
         cursor = connection.cursor()
-        cursor.execute(f'select remove_from_order("{product_id}", "{customer_id}");')
+        cursor.execute(f'select remove_from_order("{product_id}", "{size}","{customer_id}");')
         result = cursor.fetchall()[0][0]
 
         connection.commit()
@@ -480,7 +476,7 @@ class Purchase(Resource):
         if message.split(' ')[0] == 'There' or message.split(' ')[0] == 'Some':
             status_code = 404
 
-        return Response(f"{'message': '{message}'}", status=status_code, mimetype='application/json')
+        return Response(message, status=status_code, mimetype='application/json')
 
 
 class ChangeProduct(Resource):

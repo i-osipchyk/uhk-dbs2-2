@@ -8,6 +8,7 @@ import Products from '../../components/Shop/Products'
 export default function Shop() {
   const [products, setProducts] = useState([])
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
+  const [filters, setFilters] = useState({})
 
   const getProducts = async () => {
     const config = {
@@ -16,26 +17,29 @@ export default function Shop() {
       headers: {
         'Content-Type': 'application/json'
       },
-      data: {}
+      data: filters
     }
 
     await axios(config)
       .then((res) => {
         setProducts(res.data)
       })
-      .catch((err) => console.error(err))
+      .catch(() => setProducts([]))
   }
 
   useEffect(() => {
     getProducts()
-  }, [])
+  }, [filters])
 
+  console.log(filters)
   return (
     <div className={`flex w-full h-[904px]`}>
       {isFilterPanelOpen && (
         <FilterPanel
           isFilterPanelOpen={isFilterPanelOpen}
           setIsFilterPanelOpen={() => setIsFilterPanelOpen((prev) => !prev)}
+          setFilters={(key, value) => setFilters({ ...filters, [key]: value })}
+          filters={filters}
         />
       )}
       <Products

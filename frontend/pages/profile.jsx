@@ -37,6 +37,7 @@ export default function Profile() {
   const logoutUser = () => {
     Cookies.remove('user_id')
     Cookies.remove('user_type')
+    Cookies.remove('user_email')
     router.reload()
   }
 
@@ -57,7 +58,7 @@ export default function Profile() {
           </span>
           <span>Postal Code: {userData[8]}</span>
           <button
-            className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
+            className='w-full h-[40px] border border-red-600 cursor-pointer hover:bg-red-600 hover:text-white font-bold rounded-md transitionDuration'
             onClick={logoutUser}
           >
             LOG OUT

@@ -31,7 +31,7 @@ def build_get_customer_data_query(current_customer_id):
 
 
 def build_get_order_query(current_customer_id):
-    query = f'select p.name_, p.brand, p.color_1, p.color_2, p.color_3, p.category, p.release_year, p.gender, oi.size, oi.price, oi.quantity ' \
+    query = f'select p.product_id, p.name_, p.brand, p.color_1, p.color_2, p.color_3, p.category, p.release_year, p.gender, oi.size, oi.price, oi.quantity ' \
             f'from products p ' \
             f'join order_items oi on p.product_id = oi.product_id ' \
             f'join orders_ o on oi.order_id = o.order_id ' \

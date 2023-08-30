@@ -128,6 +128,7 @@ create function check_availability(
 begin
     declare order_country varchar(20);
     declare max_quantity int;
+    declare available_quantity int;
 
     # select the country of the customer
     select country into order_country from addresses
@@ -140,9 +141,20 @@ begin
         where ps.product_id = required_product_id and ps.size = required_size and ps.storage_country = order_country
     );
 
-    # if product was not found or its quantity equals to 0 returns 0
-    if max_quantity is null or max_quantity = 0 then
-        return 0;
+    if max_quantity is null then
+        set available_quantity = (
+            select max(quantity)
+            from products_storages ps
+            where ps.product_id = required_product_id and ps.storage_country = order_country
+        );
+
+        if available_quantity is null then
+            # if product was not found returns 0
+            return 0;
+        else
+            # if product quantity equals to 0 returns -2
+            return -2;
+        end if;
     end if;
 
     # if quantity of product is sufficient, return -1. if insufficient but greater than 0 return max_quantity
@@ -152,6 +164,8 @@ begin
         return max_quantity;
     end if;
 end;
+
+
 
 # add new order and return its id
 
@@ -261,8 +275,11 @@ begin
     set in_stock = check_availability(chosen_product_id, customer_address_id, chosen_quantity, chosen_size);
 
     if in_stock = 0 then
-        # if the quantity of the product in stock is 0 or product is not in the storage
+        # if product is not in the storage
         return 'This product is currently not available in your region';
+    elseif in_stock = -2 then
+        # if the quantity of the product in stock is 0
+        return 'Selected size is currently not available in your region';
     elseif in_stock = -1 then
         # if the quantity of the product in stock is sufficient, select active order of current customer
         select order_id into current_order_id from orders_
@@ -360,6 +377,7 @@ end;
 
 create function remove_from_order(
     chosen_product_id int,
+    chosen_product_size float,
     current_customer_id int
 ) returns int deterministic
 begin
@@ -381,7 +399,7 @@ begin
 
     # remove item
     delete from order_items
-    where order_id = current_order and product_id = chosen_product_id;
+    where order_id = current_order and product_id = chosen_product_id and size = chosen_product_size;
 
     return 0;
 end;
@@ -450,7 +468,7 @@ end;
 
 create function admin_login(
     login_email varchar(50)
-) returns varchar(100) deterministic
+) returns varchar(1000) deterministic
 begin
     declare existing_email varchar(50);
     declare existing_password_hash varchar(1000);

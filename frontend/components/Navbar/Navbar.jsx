@@ -9,11 +9,10 @@ export default function Navbar({ currentRoute }) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
   const [isUserCustomer, setIsUserCustomer] = useState(true)
 
-  const userId = Cookies.get('user_id')
   const userType = Cookies.get('user_type')
 
   useEffect(() => {
-    if (userId) {
+    if (userType) {
       setIsUserLoggedIn(true)
     }
     if (userType === 'admin') {
@@ -79,7 +78,7 @@ export default function Navbar({ currentRoute }) {
             className='w-[100px] h-[40px] border border-mainOrange hover:bg-mainOrange hover:text-white transitionDuration'
             onClick={() => push('/admin-panel')}
           >
-            Admin Panel
+            Admin
           </button>
         )
       ) : (

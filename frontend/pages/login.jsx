@@ -36,6 +36,10 @@ export default function login() {
           'user_type',
           loginOption === 'customer' ? 'customer' : 'admin'
         )
+        if (loginOption === 'admin') {
+          Cookies.set('user_email', formData.email)
+          push('/')
+        }
       })
       .catch((err) => setErrorMessage(err.response.data.message))
 
@@ -93,6 +97,7 @@ export default function login() {
     await axios(config)
       .then(() => {
         Cookies.set('user_email', formData.email)
+        Cookies.set('user_type', 'admin')
         push('/')
       })
       .catch((err) => {
