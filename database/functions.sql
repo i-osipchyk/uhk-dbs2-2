@@ -386,11 +386,11 @@ begin
 
     # select active order
     select order_id into current_order from orders_
-    where customer_id = current_customer_id;
+    where customer_id = current_customer_id and order_date is null;
 
     # select item price
     select price into item_price from order_items
-    where order_id = current_order and product_id = chosen_product_id;
+    where order_id = current_order and product_id = chosen_product_id and size = chosen_product_size;
 
     # update order price
     update orders_
@@ -514,7 +514,8 @@ create function add_product(
     product_category varchar(10),
     product_release_year int,
     product_gender varchar(6),
-    product_description varchar(500)
+    product_description varchar(500),
+    product_image varchar(1000)
 ) returns int deterministic
 begin
     declare existing_product_id int;
@@ -528,8 +529,8 @@ begin
 
     if existing_product_id is null then
         # if product does not exist, insert into products
-        insert into products(name_, price, brand, color_1, color_2, color_3, category, release_year, gender, description_)
-        values (product_name, product_price, product_brand, product_color_1, product_color_2, product_color_3, product_category, product_release_year, product_gender, product_description);
+        insert into products(name_, price, brand, color_1, color_2, color_3, category, release_year, gender, description_, image)
+        values (product_name, product_price, product_brand, product_color_1, product_color_2, product_color_3, product_category, product_release_year, product_gender, product_description, product_image);
 
         return 0;
     else
@@ -545,22 +546,13 @@ end;
 # if yes, select storage, add product to the storage and return message
 
 create function add_product_to_storage(
-    product_name varchar(20),
-    product_color_1 varchar(10),
-    product_color_2 varchar(10),
-    product_color_3 varchar(10),
-    product_gender varchar(6),
+    product_id_ int,
     product_size float,
     chosen_storage_city varchar(20),
     product_quantity int
 ) returns varchar(50) deterministic
 begin
-    declare product_id_ int;
     declare storage_country_ varchar(20);
-
-    # check if product exists
-    select product_id into product_id_ from products
-    where name_ = product_name and color_1 = product_color_1 and color_2 = product_color_2 and color_3 = product_color_3 and gender = product_gender;
 
     if product_id_ is null then
         # if not
@@ -575,7 +567,7 @@ begin
         insert into products_storages (product_id, size, storage_country, quantity)
         values (product_id_, product_size, storage_country_, product_quantity);
 
-        return concat(product_name, ' added to storage in ', chosen_storage_city);
+        return concat('Product with ', product_id_, ' added to storage in ', chosen_storage_city);
     end if;
 end;
 
@@ -673,7 +665,8 @@ create function change_product(
     product_brand_ch varchar(20),
     product_category_ch varchar(10),
     product_release_year_ch int,
-    product_description_ch varchar(500)
+    product_description_ch varchar(500),
+    product_image_ch varchar(1000)
 ) returns int deterministic
 begin
 
@@ -735,6 +728,12 @@ begin
         if product_description_ch is not null then
             update products
             set description_ = product_description_ch
+            where product_id = product_to_change_id;
+        end if;
+
+        if product_image_ch is not null then
+            update products
+            set image = product_image_ch
             where product_id = product_to_change_id;
         end if;
 

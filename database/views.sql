@@ -10,3 +10,15 @@ from order_items oi
 join products_storages ps on oi.product_id = ps.product_id and oi.size = ps.size
 join orders_ o on oi.order_id = o.order_id
 join addresses a on o.address_id = a.address_id;
+
+create view adidas_products as
+select * from products
+where brand like '%Adidas%';
+
+create view nike_products as
+select * from products
+where brand like '%Nike%';
+
+create view jordan_products as
+select * from products
+where brand like '%Jordan%';

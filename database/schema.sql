@@ -58,6 +58,7 @@ create table products(
     release_year int not null,
     gender varchar(6) not null,
     description_ varchar(500) not null,
+    image varchar(1000) not null
     index idx_name (name_)
 );
 

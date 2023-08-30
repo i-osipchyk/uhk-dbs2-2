@@ -132,7 +132,8 @@ class UpdateAddress(Resource):
         if result == 0:
             return Response('{"message": "Address was changed successfully."}', status=200, mimetype="application/json")
         else:
-            return Response('{"message": "Something went wrong. Please, try again."}', status=500, mimetype="application/json")
+            return Response('{"message": "Something went wrong. Please, try again."}', status=500,
+                            mimetype="application/json")
 
 
 class AddProductToOrder(Resource):
@@ -204,7 +205,8 @@ class UpdateQuantity(Resource):
         if result == 0:
             return Response('{"message": "Quantity was updated successfully"}', status=200, mimetype="application/json")
         else:
-            return Response('{"message": "Something went wrong. Please try again."}', status=500, mimetype="application/json")
+            return Response('{"message": "Something went wrong. Please try again."}', status=500,
+                            mimetype="application/json")
 
 
 class RemoveItemFromOrder(Resource):
@@ -238,7 +240,8 @@ class RemoveItemFromOrder(Resource):
         if result == 0:
             return Response('{"message": "Item removed successfully."}', status=200, mimetype="application/json")
         else:
-            return Response('{"message": "Something went wrong. Please try again."}', status=500, mimetype="application/json")
+            return Response('{"message": "Something went wrong. Please try again."}', status=500,
+                            mimetype="application/json")
 
 
 class AdminRegistration(Resource):
@@ -349,7 +352,8 @@ class AddStorage(Resource):
         if result == 0:
             return Response("{'message': 'Storage added successfully.'}", status=200, mimetype='application/json')
         else:
-            return Response("{'message': 'Something wend wrong. Please, try again'}", status=500, mimetype='application/json')
+            return Response("{'message': 'Something wend wrong. Please, try again'}", status=500,
+                            mimetype='application/json')
 
 
 class AddProduct(Resource):
@@ -365,6 +369,7 @@ class AddProduct(Resource):
         self.parser.add_argument('release_year', type=int, required=True)
         self.parser.add_argument('gender', type=str, required=True)
         self.parser.add_argument('description', type=str, required=True)
+        self.parser.add_argument('image', type=str, required=True)
 
     def post(self):
         args = self.parser.parse_args()
@@ -378,6 +383,7 @@ class AddProduct(Resource):
         release_year = args['release_year']
         gender = args['gender']
         description = args['description']
+        image = args['image']
 
         connection = mysql.connector.connect(
             user='root',
@@ -389,7 +395,7 @@ class AddProduct(Resource):
         )
         cursor = connection.cursor()
         cursor.execute(
-            f'select add_product("{name}", "{price}", "{brand}", "{color_1}", "{color_2}", "{color_3}", "{category}", "{release_year}", "{gender}", "{description}");')
+            f'select add_product("{name}", "{price}", "{brand}", "{color_1}", "{color_2}", "{color_3}", "{category}", "{release_year}", "{gender}", "{description}", "{image}");')
         result = cursor.fetchall()[0][0]
 
         connection.commit()
@@ -400,28 +406,21 @@ class AddProduct(Resource):
         elif result == 1:
             return Response("{'message': 'Product already exists.'}", status=200, mimetype='application/json')
         else:
-            return Response("{'message': 'Something went wrong. Please, try again.'}", status=500, mimetype='application/json')
+            return Response("{'message': 'Something went wrong. Please, try again.'}", status=500,
+                            mimetype='application/json')
 
 
 class AddProductToStorage(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('name', type=str, required=True)
-        self.parser.add_argument('color_1', type=str, required=True)
-        self.parser.add_argument('color_2', type=str, required=True)
-        self.parser.add_argument('color_3', type=str, required=True)
-        self.parser.add_argument('gender', type=str, required=True)
+        self.parser.add_argument('product_id', type=int, required=True)
         self.parser.add_argument('size', type=float, required=True)
         self.parser.add_argument('city', type=str, required=True)
         self.parser.add_argument('quantity', type=int, required=True)
 
     def post(self):
         args = self.parser.parse_args()
-        name = args['name']
-        color_1 = args['color_1']
-        color_2 = args['color_2']
-        color_3 = args['color_3']
-        gender = args['gender']
+        product_id = args['product_id']
         size = args['size']
         city = args['city']
         quantity = args['quantity']
@@ -436,7 +435,7 @@ class AddProductToStorage(Resource):
         )
         cursor = connection.cursor()
         cursor.execute(
-            f'select add_product_to_storage("{name}", "{color_1}", "{color_2}", "{color_3}", "{gender}", "{size}", "{city}", "{quantity}");')
+            f'select add_product_to_storage("{product_id}", "{size}", "{city}", "{quantity}");')
         message = cursor.fetchall()[0][0]
 
         connection.commit()
@@ -493,6 +492,7 @@ class ChangeProduct(Resource):
         self.parser.add_argument('new_category', type=str, required=False)
         self.parser.add_argument('new_release_year', type=int, required=False)
         self.parser.add_argument('new_description', type=str, required=False)
+        self.parser.add_argument('new_image', type=str, required=False)
 
     def post(self):
         args = self.parser.parse_args()
@@ -507,6 +507,7 @@ class ChangeProduct(Resource):
         new_category = f"\"{args['new_category']}\"" if args['new_category'] is not None else 'null'
         new_release_year = f"\"{args['new_release_year']}\"" if args['new_release_year'] is not None else 'null'
         new_description = f"\"{args['new_description']}\"" if args['new_description'] is not None else 'null'
+        new_image = f"\"{args['new_image']}\"" if args['new_image'] is not None else 'null'
 
         connection = mysql.connector.connect(
             user='root',
@@ -518,7 +519,7 @@ class ChangeProduct(Resource):
         )
         cursor = connection.cursor()
         cursor.execute(
-            f'select change_product("{product_id}", {new_name}, {new_color_1}, {new_color_2}, {new_color_3}, {new_gender}, {new_price}, {new_brand}, {new_category}, {new_release_year}, {new_description});')
+            f'select change_product("{product_id}", {new_name}, {new_color_1}, {new_color_2}, {new_color_3}, {new_gender}, {new_price}, {new_brand}, {new_category}, {new_release_year}, {new_description}, {new_image});')
         result = cursor.fetchall()[0][0]
 
         connection.commit()
@@ -578,14 +579,22 @@ class FilterProducts(Resource):
         args = self.parser.parse_args()
         name = f"\"{args['name']}\"" if args['name'] is not None else 'null'
         min_price = args['min_price'] if args['min_price'] is not None else 'null'
-        max_price = args['max_price'] if args['max_price'] is not None else 'null'
-        brand = f"\"{args['brand']}\"" if args['brand'] is not None else 'null'
         color_1 = f"\"{args['color_1']}\"" if args['color_1'] is not None else 'null'
         color_2 = f"\"{args['color_2']}\"" if args['color_2'] is not None else 'null'
         color_3 = f"\"{args['color_3']}\"" if args['color_3'] is not None else 'null'
         category = f"\"{args['category']}\"" if args['category'] is not None else 'null'
         release_year = args['release_year'] if args['release_year'] is not None else 'null'
         gender = f"\"{args['gender']}\"" if args['gender'] is not None else 'null'
+
+        max_price = args['max_price']
+        brand = args['brand']
+
+        if args['max_price'] == 0 or args['max_price'] is None:
+            max_price = 'null'
+
+        if args['brand'] == '' or args['brand'] is None:
+            brand = 'null'
+
 
         connection = mysql.connector.connect(
             user='root',
@@ -596,7 +605,8 @@ class FilterProducts(Resource):
             auth_plugin='mysql_native_password'
         )
         cursor = connection.cursor()
-        query = build_filter_query(name, min_price, max_price, brand, color_1, color_2, color_3, category, release_year, gender)
+        query = build_filter_query(name, min_price, max_price, brand, color_1, color_2, color_3, category, release_year,
+                                   gender)
         cursor.execute(query)
         result = cursor.fetchall()
 
@@ -636,7 +646,8 @@ class GetId(Resource):
         if result:
             return jsonify(result)
         else:
-            return Response('{"message":"There is no customer with this email."}', status=404, mimetype='application/json')
+            return Response('{"message":"There is no customer with this email."}', status=404,
+                            mimetype='application/json')
 
 
 class GetCustomerData(Resource):
@@ -701,6 +712,78 @@ class GetOrderData(Resource):
             return Response('{"message":"There is no current order."}', status=404, mimetype='application/json')
 
 
+class GetNikeProducts(Resource):
+    def get(self):
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
+        cursor = connection.cursor()
+        query = 'select * from nike_products;'
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        cursor.close()
+        connection.commit()
+
+        if result:
+            return result
+        else:
+            return Response('{"message":"There are no Nike products."}', status=404, mimetype='application/json')
+
+
+class GetAdidasProducts(Resource):
+    def get(self):
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
+        cursor = connection.cursor()
+        query = 'select * from adidas_products;'
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        cursor.close()
+        connection.commit()
+
+        if result:
+            return result
+        else:
+            return Response('{"message":"There are no Adidas products."}', status=404, mimetype='application/json')
+
+
+class GetJordanProducts(Resource):
+    def get(self):
+        connection = mysql.connector.connect(
+            user='root',
+            password='password',
+            # host='database',
+            # port='3306',
+            database='shop',
+            auth_plugin='mysql_native_password'
+        )
+        cursor = connection.cursor()
+        query = 'select * from jordan_products;'
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        cursor.close()
+        connection.commit()
+
+        if result:
+            return result
+        else:
+            return Response('{"message":"There are no Jordan products."}', status=404, mimetype='application/json')
+
+
 api.add_resource(CustomerRegistration, '/customer_registration', methods=['POST'])
 api.add_resource(CustomerLogin, '/customer_login', methods=['POST'])
 api.add_resource(UpdateAddress, '/update_address', methods=['POST'])
@@ -719,6 +802,9 @@ api.add_resource(FilterProducts, '/filter_products', methods=['POST'])
 api.add_resource(GetId, '/get_id', methods=['POST'])
 api.add_resource(GetCustomerData, '/get_customer_data', methods=['POST'])
 api.add_resource(GetOrderData, '/get_order_data', methods=['POST'])
+api.add_resource(GetNikeProducts, '/get_nike_products', methods=['GET'])
+api.add_resource(GetAdidasProducts, '/get_adidas_products', methods=['GET'])
+api.add_resource(GetJordanProducts, '/get_jordan_products', methods=['GET'])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
