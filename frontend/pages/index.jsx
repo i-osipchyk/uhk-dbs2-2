@@ -1,25 +1,12 @@
-import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import BrandButton from '../components/BrandButton'
 import Hero from '../components/Hero'
 import SelectionButton from '../components/SelectionButton'
 
 export default function Home() {
-  const { push } = useRouter()
+  const router = useRouter()
+  const { push } = router
 
-  // const email = Cookies.get('user_email')
-  // useEffect(() => {
-  //   if (!email) {
-  //     push('/login')
-  //   }
-  // }, [])
-
-  const logoutUser = () => {
-    Cookies.remove('user_email')
-    Cookies.remove('user_type')
-    push('/login')
-  }
   return (
     <div className='flex flex-col mx-auto w-full max-w-[1200px]'>
       <Hero />
@@ -29,22 +16,32 @@ export default function Home() {
         <BrandButton img='/jordan.png' alt='jordan' />
         <BrandButton img='/converse.png' alt='converse' />
         <BrandButton img='/puma.png' alt='puma' />
-        <BrandButton text='ALL BRANDS' />
+        <BrandButton text='ALL BRANDS' onClick={() => push('/shop')} />
       </div>
       <div className='flex mx-auto gap-[75px] mt-[50px]'>
-        <SelectionButton img='/new-in.png' alt='new in' text='NEW IN' />
+        <SelectionButton
+          img='/new-in.png'
+          alt='new in'
+          text='NEW IN'
+          onClick={() => push('/shop')}
+        />
         <SelectionButton
           img='/best-sellers.png'
           alt='best sellers'
           text='BEST SELLERS'
+          onClick={() => push('/shop')}
         />
         <SelectionButton
           img='/exclusives.png'
           alt='exclusives'
           text='EXCLUSIVES'
+          onClick={() => push('/shop')}
         />
       </div>
-      <div className='relative mt-[50px]'>
+      <div
+        className='relative mt-[50px] cursor-pointer'
+        onClick={() => push('/shop')}
+      >
         <img
           src='/back-in-stock.png'
           alt='back in stock'
@@ -54,7 +51,6 @@ export default function Home() {
           BACK IN STOCK
         </span>
       </div>
-      <button onClick={logoutUser}>LOGOUT</button>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import ShowFilterPanelButton from './ShowFilterPanelButton'
 
 export default function FilterPanel({
   isFilterPanelOpen,
-  setIsFilterPanelOpen,
+  setIsFilterPanelOpen
 }) {
   const [sex, setSex] = useState('')
   return (
@@ -56,11 +56,11 @@ export default function FilterPanel({
             </button>
             <button
               className={`flex-1 border-r border-t border-b border-black ${
-                sex === 'w' && 'bg-black text-white'
+                sex === 'f' && 'bg-black text-white'
               } hover:bg-black hover:text-white`}
-              onClick={() => setSex(sex === 'w' ? '' : 'w')}
+              onClick={() => setSex(sex === 'f' ? '' : 'f')}
             >
-              W
+              F
             </button>
           </div>
         </div>

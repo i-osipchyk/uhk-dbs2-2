@@ -1,40 +1,27 @@
 import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
-import FilterPanel from '../components/Shop/FilterPanel'
-import Products from '../components/Shop/Products'
+import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
+import FilterPanel from '../../components/Shop/FilterPanel'
+import Products from '../../components/Shop/Products'
 
 export default function Shop() {
+  const [products, setProducts] = useState([])
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
-  const [shopHeight, setShopHeight] = useState('')
-
-  useEffect(() => {
-    const height = window.innerHeight - 80
-    setShopHeight(`h-[${height}px]`)
-  }, [shopHeight])
 
   const getProducts = async () => {
     const config = {
       method: 'post',
-      url: `http://127.0.0.1:5000/get_customer_data`,
+      url: `http://127.0.0.1:5000/filter_products`,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      data: { customer_id: 3 },
+      data: {}
     }
 
-    // const data = { email: 'denis@denis.denis', password: 'denisdenis' }
-    // await fetch('http://127.0.0.1:5000/customer_login', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(data)
-    // })
-    //   .then((res) => console.log(res.json()))
-    //   .catch((err) => console.error(err))
     await axios(config)
       .then((res) => {
-        console.log(res)
+        setProducts(res.data)
       })
       .catch((err) => console.error(err))
   }
@@ -42,8 +29,6 @@ export default function Shop() {
   useEffect(() => {
     getProducts()
   }, [])
-
-  console.log(shopHeight)
 
   return (
     <div className={`flex w-full h-[904px]`}>
@@ -56,6 +41,7 @@ export default function Shop() {
       <Products
         isFilterPanelOpen={isFilterPanelOpen}
         setIsFilterPanelOpen={() => setIsFilterPanelOpen((prev) => !prev)}
+        products={products}
       />
     </div>
   )

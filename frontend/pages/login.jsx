@@ -21,25 +21,39 @@ export default function login() {
   const loginUser = async () => {
     const endpoint =
       loginOption === 'customer' ? 'customer_login' : 'admin_login'
-    const config = {
+    const loginConfig = {
       method: 'post',
       url: `http://127.0.0.1:5000/${endpoint}`,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      data: formData,
+      data: formData
     }
 
-    await axios(config)
+    await axios(loginConfig)
       .then(() => {
-        Cookies.set('user_email', formData.email)
         Cookies.set(
           'user_type',
           loginOption === 'customer' ? 'customer' : 'admin'
         )
-        push('/')
       })
       .catch((err) => setErrorMessage(err.response.data.message))
+
+    if (loginOption === 'customer') {
+      const getIdConfig = {
+        method: 'post',
+        url: `http://127.0.0.1:5000/get_id`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: { email: formData.email }
+      }
+
+      await axios(getIdConfig).then((res) => {
+        Cookies.set('user_id', res.data[0])
+        push('/')
+      })
+    }
   }
 
   // const getProduct = async () => {
@@ -71,9 +85,9 @@ export default function login() {
       method: 'post',
       url: `http://127.0.0.1:5000/${endpoint}`,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      data: formData,
+      data: formData
     }
 
     await axios(config)

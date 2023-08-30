@@ -1,4 +1,7 @@
+import { useRouter } from 'next/router'
+
 export default function Hero() {
+  const { push } = useRouter()
   return (
     <div className='w-full h-[450px] flex mt-[50px]'>
       <div className='flex flex-col h-full items-center justify-center'>
@@ -10,7 +13,10 @@ export default function Hero() {
           <p>
             Use code <span className='font-[700]'>FF2023</span> at checkout
           </p>
-          <button className='mt-[50px] text-[20px] font-[700] w-[250px] h-[68px] rounded-full bg-mainOrange text-white'>
+          <button
+            className='mt-[50px] text-[20px] font-[700] w-[250px] h-[68px] rounded-full bg-mainOrange text-white'
+            onClick={() => push('/shop')}
+          >
             SHOP NOW
           </button>
         </div>
