@@ -484,29 +484,21 @@ class Purchase(Resource):
 class ChangeProduct(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('name', type=str, required=True)
-        self.parser.add_argument('color_1', type=str, required=True)
-        self.parser.add_argument('color_2', type=str, required=True)
-        self.parser.add_argument('color_3', type=str, required=True)
-        self.parser.add_argument('gender', type=str, required=True)
-        self.parser.add_argument('new_name', type=str, required=True)
-        self.parser.add_argument('new_color_1', type=str, required=True)
-        self.parser.add_argument('new_color_2', type=str, required=True)
-        self.parser.add_argument('new_color_3', type=str, required=True)
-        self.parser.add_argument('new_gender', type=str, required=True)
-        self.parser.add_argument('new_price', type=float, required=True)
-        self.parser.add_argument('new_brand', type=str, required=True)
-        self.parser.add_argument('new_category', type=str, required=True)
-        self.parser.add_argument('new_release_year', type=int, required=True)
-        self.parser.add_argument('new_description', type=str, required=True)
+        self.parser.add_argument('product_id', type=int, required=True)
+        self.parser.add_argument('new_name', type=str, required=False)
+        self.parser.add_argument('new_color_1', type=str, required=False)
+        self.parser.add_argument('new_color_2', type=str, required=False)
+        self.parser.add_argument('new_color_3', type=str, required=False)
+        self.parser.add_argument('new_gender', type=str, required=False)
+        self.parser.add_argument('new_price', type=float, required=False)
+        self.parser.add_argument('new_brand', type=str, required=False)
+        self.parser.add_argument('new_category', type=str, required=False)
+        self.parser.add_argument('new_release_year', type=int, required=False)
+        self.parser.add_argument('new_description', type=str, required=False)
 
     def post(self):
         args = self.parser.parse_args()
-        name = args['name']
-        color_1 = args['color_1']
-        color_2 = args['color_2']
-        color_3 = args['color_3']
-        gender = args['gender']
+        product_id = args['product_id']
         new_name = f"\"{args['new_name']}\"" if args['new_name'] is not None else 'null'
         new_color_1 = f"\"{args['new_color_1']}\"" if args['new_color_1'] is not None else 'null'
         new_color_2 = f"\"{args['new_color_2']}\"" if args['new_color_2'] is not None else 'null'
@@ -528,7 +520,7 @@ class ChangeProduct(Resource):
         )
         cursor = connection.cursor()
         cursor.execute(
-            f'select change_product("{name}", "{color_1}", "{color_2}", "{color_3}", "{gender}", {new_name}, {new_color_1}, {new_color_2}, {new_color_3}, {new_gender}, {new_price}, {new_brand}, {new_category}, {new_release_year}, {new_description});')
+            f'select change_product("{product_id}", {new_name}, {new_color_1}, {new_color_2}, {new_color_3}, {new_gender}, {new_price}, {new_brand}, {new_category}, {new_release_year}, {new_description});')
         result = cursor.fetchall()[0][0]
 
         connection.commit()
@@ -543,19 +535,11 @@ class ChangeProduct(Resource):
 class DeleteProduct(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('name', type=str, required=True)
-        self.parser.add_argument('color_1', type=str, required=True)
-        self.parser.add_argument('color_2', type=str, required=True)
-        self.parser.add_argument('color_3', type=str, required=True)
-        self.parser.add_argument('gender', type=str, required=True)
+        self.parser.add_argument('product_id', type=int, required=True)
 
     def post(self):
         args = self.parser.parse_args()
-        name = args['name']
-        color_1 = args['color_1']
-        color_2 = args['color_2']
-        color_3 = args['color_3']
-        gender = args['gender']
+        product_id = args['product_id']
 
         connection = mysql.connector.connect(
             user='root',
@@ -566,7 +550,7 @@ class DeleteProduct(Resource):
             auth_plugin='mysql_native_password'
         )
         cursor = connection.cursor()
-        cursor.execute(f'select delete_product("{name}", "{color_1}", "{color_2}", "{color_3}", "{gender}");')
+        cursor.execute(f'select delete_product("{product_id}");')
         result = cursor.fetchall()[0][0]
 
         connection.commit()
