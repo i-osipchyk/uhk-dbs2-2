@@ -4,12 +4,12 @@ import ShowFilterPanelButton from './ShowFilterPanelButton'
 export default function Products({
   isFilterPanelOpen,
   setIsFilterPanelOpen,
-  products
+  products,
 }) {
   const { push } = useRouter()
 
   return (
-    <div className='h-full flex-1 overflow-y-scroll overflow-x-hidden'>
+    <div className='h-full flex-1 overflow-y-auto overflow-x-hidden'>
       <div className='w-[50px] h-[50px] absolute'>
         {!isFilterPanelOpen && (
           <ShowFilterPanelButton

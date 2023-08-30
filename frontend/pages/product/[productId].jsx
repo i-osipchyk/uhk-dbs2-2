@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react'
 export default function ProductPage({ productId }) {
   const [product, setProduct] = useState()
 
-  const getProducts = async () => {
+  const getProduct = async () => {
     const config = {
       method: 'post',
       url: `http://127.0.0.1:5000/filter_products`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      data: {}
+      data: {},
     }
 
     await axios(config)
@@ -28,7 +28,7 @@ export default function ProductPage({ productId }) {
   }
 
   useEffect(() => {
-    getProducts()
+    getProduct()
   }, [])
 
   return (
@@ -55,7 +55,7 @@ export async function getServerSideProps(context) {
   const { productId } = context.query
   return {
     props: {
-      productId
-    }
+      productId,
+    },
   }
 }

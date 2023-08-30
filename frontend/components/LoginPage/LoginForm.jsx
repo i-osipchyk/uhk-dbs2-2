@@ -6,20 +6,23 @@ export default function LoginForm({
   handleFormSubmit,
   repeatPassword,
   setRepeatPassword,
-  errorMessage
+  errorMessage,
 }) {
   return (
     <form>
       <div className='w-[400px] h-[460px] shadow-loginPage border-2 border-white overflow-hidden bg-white flex flex-col'>
         <div className='w-full h-full flex flex-col items-center'>
           {signUp ? (
-            <div className={`${loginOption === 'user' && 'flex'} my-auto px-5`}>
+            <div
+              className={`${loginOption === 'customer' && 'flex'} my-auto px-5`}
+            >
               <div
                 className={`flex flex-col gap-2 items-center ${
-                  loginOption === 'user' && 'pr-5 border-r border-darkerOrange'
+                  loginOption === 'customer' &&
+                  'pr-5 border-r border-darkerOrange'
                 }`}
               >
-                {loginOption === 'user' && (
+                {loginOption === 'customer' && (
                   <h1 className='mb-3'>Personal Information</h1>
                 )}
                 <input
@@ -83,7 +86,7 @@ export default function LoginForm({
                   />
                 )}
               </div>
-              {loginOption === 'user' && (
+              {loginOption === 'customer' && (
                 <div className='flex flex-col gap-2 items-center pl-5'>
                   <h1 className='mb-3'>Address</h1>
                   <input
