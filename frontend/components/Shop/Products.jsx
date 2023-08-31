@@ -4,14 +4,15 @@ import ShowFilterPanelButton from './ShowFilterPanelButton'
 export default function Products({
   isFilterPanelOpen,
   setIsFilterPanelOpen,
-  products
+  products,
+  noFilterPanel
 }) {
   const { push } = useRouter()
 
   return (
     <div className='h-full flex-1 overflow-y-auto overflow-x-hidden'>
       <div className='w-[50px] h-[50px] absolute'>
-        {!isFilterPanelOpen && (
+        {!noFilterPanel && !isFilterPanelOpen && (
           <ShowFilterPanelButton
             isFilterPanelOpen={isFilterPanelOpen}
             setIsFilterPanelOpen={setIsFilterPanelOpen}
@@ -26,14 +27,12 @@ export default function Products({
         >
           {products.map((product) => (
             <div
-              className='w-[300px] h-fit flex flex-col items-center p-[20px] gap-[20px] bg-white cursor-pointer rounded-md'
+              className='w-[300px] h-fit flex flex-col items-center p-[20px] gap-[20px] hover:bg-black hover:text-white bg-white cursor-pointer rounded-md transitionDuration'
               onClick={() => push(`/product/${product[0]}`)}
             >
-              <div className='w-full h-[300px] flex items-center justify-center bg-black text-white'>
-                img
-              </div>
               <img
-                src='https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/ebad848a-13b1-46d5-a85e-49b4b6a4953c/air-force-1-le-older-shoe-WZ6LmN.png'
+                className='w-full h-[300px] rounded-md'
+                src={product[11]}
                 alt='product'
               />
               <span className='flex items-center justify-center w-full font-bold text-xl'>

@@ -5,7 +5,7 @@ export default function FilterPanel({
   setIsFilterPanelOpen,
   setFilters,
   filters,
-  brand,
+  brand
 }) {
   return (
     <div className='h-full w-[400px] flex flex-col'>
@@ -48,12 +48,7 @@ export default function FilterPanel({
               step={100}
               className='w-[70px] text-lg outline-none border-b border-black'
               value={filters.max_price ? filters.max_price : ''}
-              onChange={(e) =>
-                setFilters(
-                  'max_price',
-                  Number(e.target.value) === 0 ? 9999 : Number(e.target.value)
-                )
-              }
+              onChange={(e) => setFilters('max_price', Number(e.target.value))}
             />
           </div>
         </div>
@@ -104,16 +99,56 @@ export default function FilterPanel({
         </div>
         <div className='flex flex-wrap items-center gap-[20px]'>
           <span className='w-[150px]'>CATEGORY</span>
-          <button className='border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white'>
+          <button
+            className={`${
+              filters.category === 'Basketball' && 'bg-black text-white'
+            } border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white`}
+            onClick={() =>
+              setFilters(
+                'category',
+                filters.category === 'Basketball' ? '' : 'Basketball'
+              )
+            }
+          >
             Basketball
           </button>
-          <button className='border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white'>
+          <button
+            className={`${
+              filters.category === 'Lifestyle' && 'bg-black text-white'
+            } border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white`}
+            onClick={() =>
+              setFilters(
+                'category',
+                filters.category === 'Lifestyle' ? '' : 'Lifestyle'
+              )
+            }
+          >
             Lifestyle
           </button>
-          <button className='border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white'>
+          <button
+            className={`${
+              filters.category === 'Running' && 'bg-black text-white'
+            } border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white`}
+            onClick={() =>
+              setFilters(
+                'category',
+                filters.category === 'Running' ? '' : 'Running'
+              )
+            }
+          >
             Running
           </button>
-          <button className='border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white'>
+          <button
+            className={`${
+              filters.category === 'Skateboarding' && 'bg-black text-white'
+            } border-2 border-black px-[10px] rounded-sm hover:bg-black hover:text-white`}
+            onClick={() =>
+              setFilters(
+                'category',
+                filters.category === 'Skateboarding' ? '' : 'Skateboarding'
+              )
+            }
+          >
             Skateboarding
           </button>
         </div>

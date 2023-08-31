@@ -48,6 +48,12 @@ export default function AdminPanel() {
               DELETE PRODUCT
             </button>
             <button
+              className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
+              onClick={() => setEndpoint('add_storage')}
+            >
+              ADD STORAGE
+            </button>
+            <button
               className='w-full h-[40px] border border-red-600 cursor-pointer hover:bg-red-600 hover:text-white font-bold rounded-md transitionDuration'
               onClick={logoutUser}
             >

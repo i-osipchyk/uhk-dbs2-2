@@ -8,6 +8,7 @@ export default function ShoppingCart() {
   const { push } = router
 
   const [orderData, setOrderData] = useState([])
+  const [errorMessage, setErrorMessage] = useState('')
 
   const userId = Cookies.get('user_id')
 
@@ -21,12 +22,9 @@ export default function ShoppingCart() {
       data: { customer_id: userId }
     }
 
-    await axios(config)
-      .then((res) => {
-        setOrderData(res.data)
-        console.log(res.data)
-      })
-      .catch((err) => console.error(err))
+    await axios(config).then((res) => {
+      setOrderData(res.data)
+    })
   }
 
   const removeItemFromOrder = async (productId, productSize) => {
@@ -39,11 +37,9 @@ export default function ShoppingCart() {
       data: { customer_id: userId, product_id: productId, size: productSize }
     }
 
-    await axios(config)
-      .then(() => {
-        router.reload()
-      })
-      .catch((err) => console.error(err))
+    await axios(config).then(() => {
+      router.reload()
+    })
   }
 
   const purchaseOrder = async () => {
@@ -60,7 +56,7 @@ export default function ShoppingCart() {
       .then(() => {
         router.reload()
       })
-      .catch((err) => console.error(err))
+      .catch((err) => setErrorMessage(err?.response?.data))
   }
   useEffect(() => {
     if (!userId) {
@@ -91,6 +87,7 @@ export default function ShoppingCart() {
                 </div>
               </div>
             ))}
+            <span className='text-red-600 self-center'>{errorMessage}</span>
             <button
               className='w-full h-[40px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
               onClick={purchaseOrder}

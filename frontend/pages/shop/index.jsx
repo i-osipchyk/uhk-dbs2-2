@@ -13,9 +13,9 @@ export default function Shop() {
       method: 'post',
       url: `http://127.0.0.1:5000/filter_products`,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      data: filters,
+      data: filters
     }
 
     await axios(config)
@@ -30,7 +30,7 @@ export default function Shop() {
   }, [filters])
 
   return (
-    <div className={`flex w-full h-[904px]`}>
+    <div className={`flex w-full h-fit min-h-[904px]`}>
       {isFilterPanelOpen && (
         <FilterPanel
           isFilterPanelOpen={isFilterPanelOpen}

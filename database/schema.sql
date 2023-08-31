@@ -1,3 +1,7 @@
+create database shop;
+
+use shop;
+
 create table addresses(
     address_id int auto_increment primary key,
     country varchar(20) not null,

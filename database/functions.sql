@@ -74,7 +74,7 @@ end;
 
 create function customer_login(
     login_email varchar(50)
-) returns varchar(100) deterministic
+) returns varchar(1000) deterministic
 begin
     declare existing_email varchar(50);
     declare existing_password_hash varchar(1000);

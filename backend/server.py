@@ -363,8 +363,8 @@ class AddProduct(Resource):
         self.parser.add_argument('price', type=float, required=True)
         self.parser.add_argument('brand', type=str, required=True)
         self.parser.add_argument('color_1', type=str, required=True)
-        self.parser.add_argument('color_2', type=str, required=True)
-        self.parser.add_argument('color_3', type=str, required=True)
+        self.parser.add_argument('color_2', type=str, required=False)
+        self.parser.add_argument('color_3', type=str, required=False)
         self.parser.add_argument('category', type=str, required=True)
         self.parser.add_argument('release_year', type=int, required=True)
         self.parser.add_argument('gender', type=str, required=True)
@@ -582,18 +582,27 @@ class FilterProducts(Resource):
         color_1 = f"\"{args['color_1']}\"" if args['color_1'] is not None else 'null'
         color_2 = f"\"{args['color_2']}\"" if args['color_2'] is not None else 'null'
         color_3 = f"\"{args['color_3']}\"" if args['color_3'] is not None else 'null'
-        category = f"\"{args['category']}\"" if args['category'] is not None else 'null'
-        release_year = args['release_year'] if args['release_year'] is not None else 'null'
         gender = f"\"{args['gender']}\"" if args['gender'] is not None else 'null'
-
-        max_price = args['max_price']
-        brand = args['brand']
 
         if args['max_price'] == 0 or args['max_price'] is None:
             max_price = 'null'
+        else:
+            max_price = args['max_price']
+
+        if args['release_year'] == 0 or args['release_year'] is None:
+            release_year = 'null'
+        else:
+            release_year = args['release_year']
 
         if args['brand'] == '' or args['brand'] is None:
             brand = 'null'
+        else:
+            brand = f"\"{args['brand']}\""
+
+        if args['category'] == '' or args['category'] is None:
+            category = 'null'
+        else:
+            category = f"\"{args['category']}\""
 
 
         connection = mysql.connector.connect(

@@ -8,7 +8,7 @@ export default function ProductPage({ productId }) {
 
   const [product, setProduct] = useState()
   const [quantity, setQuantity] = useState(1)
-  const [size, setSize] = useState(3)
+  const [size, setSize] = useState(8)
   const [userType, setUserType] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -25,16 +25,13 @@ export default function ProductPage({ productId }) {
       data: {}
     }
 
-    await axios(config)
-      .then((res) => {
-        res.data.forEach((item) => {
-          if (item[0] === Number(productId)) {
-            setProduct(item)
-          }
-        })
-        console.log(res.data)
+    await axios(config).then((res) => {
+      res.data.forEach((item) => {
+        if (item[0] === Number(productId)) {
+          setProduct(item)
+        }
       })
-      .catch((err) => console.error(err))
+    })
   }
 
   const addProductToCart = async () => {
@@ -67,61 +64,67 @@ export default function ProductPage({ productId }) {
   return (
     <div className='w-full h-[904px] flex items-center justify-center'>
       {product && (
-        <div className='w-fit min-w-[300px] h-fit shadow-blackShadow p-[20px] rounded-xl flex flex-col gap-[20px]'>
-          <span className='self-center text-xl font-bold'>
-            {product[3]} {product[1]}
-          </span>
-          <span>{product[10]}</span>
-          <span>Year: {product[8]}</span>
-          <span>Sex: {product[9]}</span>
-          <span>Price: {product[2]}</span>
-          {userType === 'customer' ? (
-            <>
-              <div className='w-full flex gap-[20px] items-center'>
-                <div className='flex-1 flex flex-col gap-[10px] items-center'>
-                  <span>Quantity</span>
-                  <input
-                    type='number'
-                    min={1}
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className='w-[100px] rounded-md p-[10px] outline-none border border-black'
-                    onKeyDown={(e) => e.preventDefault}
-                  />
+        <div className='w-full h-[904px] p-[20px] flex items-center gap-[20px]'>
+          <div>
+            <img src={product[11]} alt='product' className='w-[400px]' />
+          </div>
+          <div className='flex flex-col gap-[20px]'>
+            <span className='self-center text-xl font-bold'>
+              {product[3]} {product[1]}
+            </span>
+            <span>{product[10]}</span>
+            <span>Year: {product[8]}</span>
+            <span>Sex: {product[9]}</span>
+            <span>Price: {product[2]}</span>
+            {userType === 'customer' ? (
+              <>
+                <div className='w-full flex gap-[20px] items-center'>
+                  <div className='flex-1 flex flex-col gap-[10px] items-center'>
+                    <span>Quantity</span>
+                    <input
+                      type='number'
+                      min={1}
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
+                      className='w-[100px] rounded-md p-[10px] outline-none border border-black'
+                      onKeyDown={(e) => e.preventDefault}
+                    />
+                  </div>
+                  <div className='flex-1 flex flex-col gap-[10px] items-center'>
+                    <span>Size</span>
+                    <input
+                      type='number'
+                      min={8}
+                      max={10.5}
+                      step={0.5}
+                      value={size}
+                      onChange={(e) => setSize(e.target.value)}
+                      className='w-[100px] rounded-md p-[10px] outline-none border border-black'
+                      onKeyDown={(e) => e.preventDefault}
+                    />
+                  </div>
                 </div>
-                <div className='flex-1 flex flex-col gap-[10px] items-center'>
-                  <span>Size</span>
-                  <input
-                    type='number'
-                    min={3}
-                    step={0.5}
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                    className='w-[100px] rounded-md p-[10px] outline-none border border-black'
-                    onKeyDown={(e) => e.preventDefault}
-                  />
-                </div>
-              </div>
-              <span className='text-red-600 w-[300px] flex text-center'>
-                {errorMessage}
-              </span>
-              <button
-                className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
-                onClick={addProductToCart}
-              >
-                ADD TO CART
-              </button>
-            </>
-          ) : (
-            !userType && (
-              <button
-                className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
-                onClick={() => push('/login')}
-              >
-                LOG IN TO BUY
-              </button>
-            )
-          )}
+                <span className='text-red-600 w-[300px] flex text-center'>
+                  {errorMessage}
+                </span>
+                <button
+                  className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
+                  onClick={addProductToCart}
+                >
+                  ADD TO CART
+                </button>
+              </>
+            ) : (
+              !userType && (
+                <button
+                  className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
+                  onClick={() => push('/login')}
+                >
+                  LOG IN TO BUY
+                </button>
+              )
+            )}
+          </div>
         </div>
       )}
     </div>

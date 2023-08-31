@@ -21,7 +21,11 @@ export default function Home() {
           alt='adidas'
           onClick={() => push('/shop/adidas')}
         />
-        <BrandButton img='/jordan.png' alt='jordan' />
+        <BrandButton
+          img='/jordan.png'
+          alt='jordan'
+          onClick={() => push('/shop/jordan')}
+        />
         <BrandButton img='/converse.png' alt='converse' />
         <BrandButton img='/puma.png' alt='puma' />
         <BrandButton text='ALL BRANDS' onClick={() => push('/shop')} />

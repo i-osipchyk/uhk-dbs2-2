@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 export default function ProductForm({ endpoint, closeForm }) {
   const router = useRouter()
   const [formData, setFormData] = useState({
+    image: '',
     name: '',
     price: '',
     brand: '',
@@ -14,7 +15,11 @@ export default function ProductForm({ endpoint, closeForm }) {
     description: '',
     color_1: '',
     color_2: '',
-    color_3: '',
+    color_3: ''
+  })
+  const [storageData, setStorageData] = useState({
+    country: '',
+    city: ''
   })
   const [product, setProduct] = useState([])
   const [productId, setProductId] = useState('')
@@ -22,13 +27,14 @@ export default function ProductForm({ endpoint, closeForm }) {
   const onInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     })
   }
 
   useEffect(() => {
     if (product.length > 0) {
       setFormData({
+        new_image: product[11],
         new_name: product[1],
         new_price: product[2],
         new_brand: product[3],
@@ -38,7 +44,7 @@ export default function ProductForm({ endpoint, closeForm }) {
         new_description: product[10],
         new_color_1: product[4],
         new_color_2: product[5],
-        new_color_3: product[6],
+        new_color_3: product[6]
       })
     }
   }, [product])
@@ -49,9 +55,9 @@ export default function ProductForm({ endpoint, closeForm }) {
         method: 'post',
         url: `http://127.0.0.1:5000/filter_products`,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        data: {},
+        data: {}
       }
 
       await axios(config).then((res) => {
@@ -73,10 +79,25 @@ export default function ProductForm({ endpoint, closeForm }) {
       method: 'post',
       url: `http://127.0.0.1:5000/${endpoint}`,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       data:
-        endpoint === 'delete_product' ? { product_id: productId } : dataObject,
+        endpoint === 'delete_product' ? { product_id: productId } : dataObject
+    }
+
+    await axios(config).then(() => {
+      router.reload()
+    })
+  }
+
+  const addStorage = async () => {
+    const config = {
+      method: 'post',
+      url: `http://127.0.0.1:5000/add_storage`,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: storageData
     }
 
     await axios(config).then(() => {
@@ -88,6 +109,13 @@ export default function ProductForm({ endpoint, closeForm }) {
     if (endpoint === 'add_product') {
       return (
         <>
+          <input
+            name='image'
+            placeholder='Image Link'
+            value={formData.image}
+            onChange={onInputChange}
+            className='loginPageInput'
+          />
           <input
             name='name'
             placeholder='Name'
@@ -169,6 +197,13 @@ export default function ProductForm({ endpoint, closeForm }) {
     } else if (endpoint === 'change_product') {
       return product.length > 0 ? (
         <>
+          <input
+            name='new_image'
+            placeholder='Image Link'
+            value={formData.new_image}
+            onChange={onInputChange}
+            className='loginPageInput'
+          />
           <input
             name='new_name'
             placeholder='Name'
@@ -281,8 +316,37 @@ export default function ProductForm({ endpoint, closeForm }) {
           </button>
         </>
       )
+    } else if (endpoint === 'add_storage') {
+      return (
+        <>
+          <input
+            name='country'
+            placeholder='Country'
+            onChange={(e) =>
+              setStorageData({ ...storageData, country: e.target.value })
+            }
+            value={storageData.country}
+            className='loginPageInput'
+          />
+          <input
+            name='city'
+            placeholder='City'
+            onChange={(e) =>
+              setStorageData({ ...storageData, city: e.target.value })
+            }
+            value={storageData.city}
+            className='loginPageInput'
+          />
+          <button
+            className='w-full h-[80px] border border-mainOrange cursor-pointer hover:bg-mainOrange hover:text-white font-bold rounded-md transitionDuration'
+            onClick={addStorage}
+          >
+            ADD STORAGE
+          </button>
+        </>
+      )
     }
-  }, [formData, productId])
+  }, [formData, productId, storageData])
 
   return (
     <div className='w-full flex flex-col gap-[20px] justify-start'>

@@ -1,21 +1,17 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import FilterPanel from '../../components/Shop/FilterPanel'
 import Products from '../../components/Shop/Products'
 
 export default function Adidas() {
   const [products, setProducts] = useState([])
-  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
-  const [filters, setFilters] = useState({ brand: 'adidas' })
 
   const getProducts = async () => {
     const config = {
-      method: 'post',
-      url: `http://127.0.0.1:5000/filter_products`,
+      method: 'get',
+      url: `http://127.0.0.1:5000/get_adidas_products`,
       headers: {
-        'Content-Type': 'application/json',
-      },
-      data: filters,
+        'Content-Type': 'application/json'
+      }
     }
 
     await axios(config)
@@ -27,24 +23,11 @@ export default function Adidas() {
 
   useEffect(() => {
     getProducts()
-  }, [filters])
+  }, [])
 
   return (
-    <div className={`flex w-full h-[904px]`}>
-      {isFilterPanelOpen && (
-        <FilterPanel
-          isFilterPanelOpen={isFilterPanelOpen}
-          setIsFilterPanelOpen={() => setIsFilterPanelOpen((prev) => !prev)}
-          setFilters={(key, value) => setFilters({ ...filters, [key]: value })}
-          filters={filters}
-          brand='adidas'
-        />
-      )}
-      <Products
-        isFilterPanelOpen={isFilterPanelOpen}
-        setIsFilterPanelOpen={() => setIsFilterPanelOpen((prev) => !prev)}
-        products={products}
-      />
+    <div className={`flex w-full h-fit min-h-[904px]`}>
+      <Products noFilterPanel products={products} />
     </div>
   )
 }

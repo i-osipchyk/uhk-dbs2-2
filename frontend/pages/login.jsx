@@ -27,21 +27,19 @@ export default function login() {
       headers: {
         'Content-Type': 'application/json'
       },
-      data: formData
+      data: { email: formData.email, password: formData.password }
     }
 
-    await axios(loginConfig)
-      .then(() => {
-        Cookies.set(
-          'user_type',
-          loginOption === 'customer' ? 'customer' : 'admin'
-        )
-        if (loginOption === 'admin') {
-          Cookies.set('user_email', formData.email)
-          push('/')
-        }
-      })
-      .catch((err) => setErrorMessage(err.response.data.message))
+    await axios(loginConfig).then(() => {
+      Cookies.set(
+        'user_type',
+        loginOption === 'customer' ? 'customer' : 'admin'
+      )
+      if (loginOption === 'admin') {
+        Cookies.set('user_email', formData.email)
+        push('/')
+      }
+    })
 
     if (loginOption === 'customer') {
       const getIdConfig = {
@@ -60,27 +58,7 @@ export default function login() {
     }
   }
 
-  // const getProduct = async () => {
-  //   const config = {
-  //     method: 'post',
-  //     url: `http://127.0.0.1:5000/get_id`,
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     data: { email: 'denis@denis.denis' }
-  //   }
-
-  //   await axios(config)
-  //     .then((res) => console.log(res.json()))
-  //     .catch((err) => console.error(err))
-  // }
-
-  // useEffect(() => {
-  //   getProduct()
-  // }, [])
-
   const registerUser = async () => {
-    console.log('Data', JSON.stringify(formData))
     const endpoint =
       loginOption === 'customer'
         ? 'customer_registration'
@@ -94,16 +72,15 @@ export default function login() {
       data: formData
     }
 
-    await axios(config)
-      .then(() => {
+    await axios(config).then(() => {
+      if (loginOption === 'admin') {
         Cookies.set('user_email', formData.email)
         Cookies.set('user_type', 'admin')
         push('/')
-      })
-      .catch((err) => {
-        const { data } = err.response
-        console.log(data)
-      })
+      } else {
+        loginUser()
+      }
+    })
   }
 
   function handleFormSubmit(e) {
