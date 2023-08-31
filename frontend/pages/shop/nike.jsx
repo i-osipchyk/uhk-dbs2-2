@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import FilterPanel from '../../components/Shop/FilterPanel'
 import Products from '../../components/Shop/Products'
 
-export default function Shop() {
+export default function Nike() {
   const [products, setProducts] = useState([])
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useState({ brand: 'nike' })
 
   const getProducts = async () => {
     const config = {
@@ -37,6 +37,7 @@ export default function Shop() {
           setIsFilterPanelOpen={() => setIsFilterPanelOpen((prev) => !prev)}
           setFilters={(key, value) => setFilters({ ...filters, [key]: value })}
           filters={filters}
+          brand='nike'
         />
       )}
       <Products

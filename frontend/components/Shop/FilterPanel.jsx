@@ -1,12 +1,11 @@
-import { useState } from 'react'
 import ShowFilterPanelButton from './ShowFilterPanelButton'
-// basketball, lifestyle, running, skateboarding
 
 export default function FilterPanel({
   isFilterPanelOpen,
   setIsFilterPanelOpen,
   setFilters,
-  filters
+  filters,
+  brand,
 }) {
   return (
     <div className='h-full w-[400px] flex flex-col'>
@@ -88,12 +87,20 @@ export default function FilterPanel({
         </div>
         <div className='flex items-center gap-[20px]'>
           <span className='w-[150px]'>BRAND</span>
-          <input
-            type='text'
-            className='w-[100px] text-lg outline-none border-b border-black'
-            value={filters.brand ? filters.brand : ''}
-            onChange={(e) => setFilters('brand', e.target.value)}
-          />
+          {brand ? (
+            <input
+              type='text'
+              className='w-[100px] text-lg outline-none border-b border-black'
+              value={brand}
+            />
+          ) : (
+            <input
+              type='text'
+              className='w-[100px] text-lg outline-none border-b border-black'
+              value={filters.brand ? filters.brand : ''}
+              onChange={(e) => setFilters('brand', e.target.value)}
+            />
+          )}
         </div>
         <div className='flex flex-wrap items-center gap-[20px]'>
           <span className='w-[150px]'>CATEGORY</span>

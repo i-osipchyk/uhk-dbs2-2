@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Navbar from '../components/Navbar/Navbar'
 import '../styles/globals.css'
+import Footer from '../components/Footer'
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()
@@ -13,6 +14,7 @@ export default function App({ Component, pageProps }) {
       </Head>
       {currentRoute !== 'login' && <Navbar currentRoute={currentRoute} />}
       <Component {...pageProps} />
+      {currentRoute !== 'login' && <Footer />}
     </>
   )
 }

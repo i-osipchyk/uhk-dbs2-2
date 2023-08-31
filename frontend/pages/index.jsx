@@ -11,8 +11,16 @@ export default function Home() {
     <div className='flex flex-col mx-auto w-full max-w-[1200px]'>
       <Hero />
       <div className='flex justify-between mt-[50px]'>
-        <BrandButton img='/nike.png' alt='nike' />
-        <BrandButton img='/adidas.png' alt='adidas' />
+        <BrandButton
+          img='/nike.png'
+          alt='nike'
+          onClick={() => push('/shop/nike')}
+        />
+        <BrandButton
+          img='/adidas.png'
+          alt='adidas'
+          onClick={() => push('/shop/adidas')}
+        />
         <BrandButton img='/jordan.png' alt='jordan' />
         <BrandButton img='/converse.png' alt='converse' />
         <BrandButton img='/puma.png' alt='puma' />

@@ -26,8 +26,6 @@ export default function ProductForm({ endpoint, closeForm }) {
     })
   }
 
-  console.log(formData)
-
   useEffect(() => {
     if (product.length > 0) {
       setFormData({
@@ -56,16 +54,13 @@ export default function ProductForm({ endpoint, closeForm }) {
         data: {},
       }
 
-      await axios(config)
-        .then((res) => {
-          res.data.forEach((item) => {
-            if (item[0] === Number(productId)) {
-              setProduct(item)
-            }
-          })
-          console.log(res.data)
+      await axios(config).then((res) => {
+        res.data.forEach((item) => {
+          if (item[0] === Number(productId)) {
+            setProduct(item)
+          }
         })
-        .catch((err) => console.error(err))
+      })
     }
   }
 
@@ -84,12 +79,9 @@ export default function ProductForm({ endpoint, closeForm }) {
         endpoint === 'delete_product' ? { product_id: productId } : dataObject,
     }
 
-    await axios(config)
-      .then((res) => {
-        console.log(res)
-        router.reload()
-      })
-      .catch((err) => console.error(err))
+    await axios(config).then(() => {
+      router.reload()
+    })
   }
 
   const form = useMemo(() => {
